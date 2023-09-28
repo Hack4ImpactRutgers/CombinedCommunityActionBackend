@@ -19,7 +19,7 @@ export const connectDB = async () => {
     .then(() => {
       console.log('🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨');
     })
-    .catch((err: any) => {
+    .catch((err) => {
       console.log(err.message);
     });
 };
