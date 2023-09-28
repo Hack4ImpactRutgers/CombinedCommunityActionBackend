@@ -1,7 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { connectDB } from './connectDB';
+
 dotenv.config();
-let connectDB = require('./connectDB');
 
 // Express setup
 const app: Express = express();
