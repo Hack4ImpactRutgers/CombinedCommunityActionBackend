@@ -12,6 +12,39 @@ PORT:<Port to run the project on> // not sure if we need this
 
 # MongoDB Under Construction ⚠️⚠️⚠️🚧🚧🚧
 Here's some information to help you get an idea of how MongoDB works:
+
+## CLI Commands
+> Make sure you have Mongo CLI downloaded and working.
+
+`cd` do the project directory and run:
+```
+mongosh
+```
+And pray to god it works cause it sux when it doesn't.
+Then you can use the `person` schema we created in the `schemas/` directory. In order to do so run:
+```
+use person
+```
+Then you can create a new person by running:
+```js
+db.myCollections.insertOne({ 
+    name: "Billy Joe Bob", 
+    role: "Argumentative Research Paper" 
+    })
+```
+Here we're creating a collection named `myCollection` and inserting a person in there with those values.
+
+You can also run `find()` functions using:
+```js
+db.myCollections.find({ name: "Billy Joe Bob" })
+```
+Here we're filtering by name of the person in the db.
+
+```js
+db.myCollections.updateOne({name: "Billy Joe Bob"}, {$set{ name: "Phil" }})
+```
+here ur doing `.updateOne(<filter>, {$set<updated: value>})
+
 ### Schemas
 They are essentially like objects and are created in the `models/` folder.
 Example:
