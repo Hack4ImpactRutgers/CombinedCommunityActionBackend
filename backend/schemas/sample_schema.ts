@@ -1,16 +1,16 @@
-const mongoose = require("mongoose")
+import mongoose from 'mongoose';
 
 const person = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
+  name: {
+    type: String,
+    required: true,
+  },
 
-    // Admin, Volunteer, Customer
-    role: {
-        type: String,
-        required: true,
-    }
-})
+  // Admin, Volunteer, Customer
+  role: {
+    type: String,
+    required: true,
+  }
+});
 
-module.exports = mongoose.model("person", person)
+module.exports = mongoose.model('person', person);
