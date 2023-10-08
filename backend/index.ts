@@ -1,6 +1,6 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { connectDB } from './connectDB';
+import express, { Express, Request, Response } from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./connectDB";
 
 dotenv.config();
 
@@ -19,8 +19,8 @@ app.use("/client", clientRoute);
 
 connectDB();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+app.get("/", (req: Request, res: Response) => {
+  res.send("Express + TypeScript Server");
 });
 
 app.listen(port, () => {
