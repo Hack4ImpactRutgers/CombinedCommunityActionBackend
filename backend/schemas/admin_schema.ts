@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const adminSchema = new mongoose.Schema(
   {
@@ -7,4 +7,6 @@ const adminSchema = new mongoose.Schema(
   {}
 );
 
-module.exports = mongoose.model("admin", adminSchema);
+const adminModel = mongoose.model('admin', adminSchema);
+
+export default adminModel;

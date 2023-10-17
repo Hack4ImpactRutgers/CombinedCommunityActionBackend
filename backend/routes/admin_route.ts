@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-const Admin = require('../schemas/admin_schema');
+import Admin from '../schemas/admin_schema';
 const router = express.Router();
 /*
 const auth = require("../middleware/auth");
@@ -32,4 +32,4 @@ router.post('/', /*, [auth, adminAuth], */ (req: Request, res: Response) => {
   );
 });
 
-module.exports = router;
+export default router;

@@ -4,8 +4,8 @@ import endpoint from './endpoints.config';
 
 dotenv.config();
 
-const dbName = 'db';
-const DB_URI: string = endpoint.MONGODB_URI!;
+const dbName = 'cca';
+const DB_URI: string = endpoint.MONGODB_URI;
 console.log(endpoint.MONGODB_URI);
 
 // Connect to Database
