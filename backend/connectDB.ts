@@ -1,10 +1,10 @@
-import mongoose, { ConnectOptions } from 'mongoose';
-import dotenv from 'dotenv';
-import endpoint from './endpoints.config';
+import mongoose, { ConnectOptions } from "mongoose";
+import dotenv from "dotenv";
+import endpoint from "./endpoints.config";
 
 dotenv.config();
 
-const dbName = 'cca';
+const dbName = "cca";
 const DB_URI: string = endpoint.MONGODB_URI;
 console.log(endpoint.MONGODB_URI);
 
@@ -17,7 +17,7 @@ export const connectDB = async () => {
       dbName: dbName,
     } as ConnectOptions)
     .then(() => {
-      console.log('🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨');
+      console.log("🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨");
     })
     .catch((err) => {
       console.log(err.message);

@@ -1,12 +1,12 @@
-import express, { Request, Response } from 'express';
-const Volunteer = require('../schemas/volunteer_schema');
+import express, { Request, Response } from "express";
+import Volunteer from "../schemas/volunteer_schema";
 const router = express.Router();
 /*
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 */
 
-router.get('/:id', (req: Request, res: Response) => {
+router.get("/:id", (req: Request, res: Response) => {
   Volunteer.findById(req.params.id).then(
     (volunteer: any) => {
       res.send(volunteer);
@@ -14,12 +14,12 @@ router.get('/:id', (req: Request, res: Response) => {
   ).catch(
     (err: any) => {
       console.log(err);
-      res.send('volunteer ' + req.params.id);
+      res.send("volunteer " + req.params.id);
     }
   );
 });
 
-router.post('/', /*, [auth, admin], */ (req: Request, res: Response) => {
+router.post("/", /*, [auth, admin], */ (req: Request, res: Response) => {
   const newVolunteer = new Volunteer(req.body);
   newVolunteer.save().then(
     (volunteer: any) => {
@@ -32,4 +32,4 @@ router.post('/', /*, [auth, admin], */ (req: Request, res: Response) => {
   );
 });
 
-module.exports = router;
+export default router;

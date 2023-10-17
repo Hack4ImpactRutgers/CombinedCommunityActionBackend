@@ -1,26 +1,25 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { connectDB } from './connectDB';
-import adminRoute from './routes/admin_route';
+import express, { Express, Request, Response } from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./connectDB";
+import adminRoute from "./routes/admin_route";
+import volunteerRoute from "./routes/volunteer_route";
+import clientRoute from "./routes/client_route";
 
 dotenv.config();
 
-// Route imports
-const volunteerRoute = require('./routes/volunteer_route');
-const clientRoute = require('./routes/client_route');
 
 // Express setup
 const app: Express = express();
 const port = process.env.PORT;
 
-app.use('/admin', adminRoute);
-app.use('/volunteer', volunteerRoute);
-app.use('/client', clientRoute);
+app.use("/admin", adminRoute);
+app.use("/volunteer", volunteerRoute);
+app.use("/client", clientRoute);
 
 connectDB();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+app.get("/", (req: Request, res: Response) => {
+  res.send("Express + TypeScript Server");
 });
 
 app.listen(port, () => {

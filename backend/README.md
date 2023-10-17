@@ -1,7 +1,11 @@
 # Backend Set Up
 1. Run `npm install`
-2. Create a `.env` file inside `backend/` which contains just one line: PORT=8000
-3. Run `npm run dev` to launch server in dev
+2. Create a `.env` file inside `backend/`. To test locally, your .env file should look like this:
+```
+PORT=8000
+MONGODB_URI='mongodb://127.0.0.1:27017'
+```
+4. Run `npm run dev` to launch server in dev
 
 # Environment
 You need environment variables run services in the application (like MongoDB). These are the environment variables you'll need in a `.env` file in the root backend directory *I believe*.

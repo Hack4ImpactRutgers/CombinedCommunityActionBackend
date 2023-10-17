@@ -1,12 +1,12 @@
-import express, { Request, Response } from 'express';
-import Admin from '../schemas/admin_schema';
+import express, { Request, Response } from "express";
+import Admin from "../schemas/admin_schema";
 const router = express.Router();
 /*
 const auth = require("../middleware/auth");
 const adminAuth = require("../middleware/admin");
 */
 
-router.get('/:id', (req: Request, res: Response) => {
+router.get("/:id", (req: Request, res: Response) => {
   Admin.findById(req.params.id).then(
     (admin: any) => {
       res.send(admin);
@@ -14,12 +14,12 @@ router.get('/:id', (req: Request, res: Response) => {
   ).catch(
     (err: any) => {
       console.log(err);
-      res.send('admin ' + req.params.id);
+      res.send("admin " + req.params.id);
     }
   );
 });
 
-router.post('/', /*, [auth, adminAuth], */ (req: Request, res: Response) => {
+router.post("/", /*, [auth, adminAuth], */ (req: Request, res: Response) => {
   const newAdmin = new Admin(req.body);
   newAdmin.save().then(
     (admin: any) => {

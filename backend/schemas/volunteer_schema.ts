@@ -10,4 +10,6 @@ const volunteerSchema = new mongoose.Schema(
   { _id: false }
 );
 
-module.exports = mongoose.model("Volunteer", volunteerSchema);
+const Volunteer = mongoose.model("Volunteer", volunteerSchema);
+
+export default Volunteer;

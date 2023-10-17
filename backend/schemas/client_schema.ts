@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const petSchema = new mongoose.Schema({
   isActive: {type: Boolean, required: true},
@@ -17,5 +17,6 @@ const clientSchema = new mongoose.Schema({
   region: String,
   pets: [petSchema]
 });
+const Client = mongoose.model("Client", clientSchema);
 
-module.exports = mongoose.model('Client', clientSchema);
+export default Client;
