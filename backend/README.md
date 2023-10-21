@@ -5,7 +5,8 @@
 PORT=8000
 MONGODB_URI='mongodb://127.0.0.1:27017'
 ```
-4. Run `npm run dev` to launch server in dev
+3. To host mongodb locally, you can create a terminal session in vscode and then run `mongod`
+4. In another terminal session, run `npm run dev` to launch server in dev (It should say 🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨 or else double check your `.env` file)
 
 # Environment
 You need environment variables run services in the application (like MongoDB). These are the environment variables you'll need in a `.env` file in the root backend directory *I believe*.
