@@ -8,20 +8,17 @@ const dbName = "cca";
 const DB_URI: string = endpoint.MONGODB_URI;
 console.log(endpoint.MONGODB_URI);
 
-// Connect to Database
 export const connectDB = async () => {
-  await mongoose
-    .connect(DB_URI, {
+  try {
+    await mongoose.connect(DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       dbName: dbName,
-    } as ConnectOptions)
-    .then(() => {
-      console.log("🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨");
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+    } as ConnectOptions);
+    console.log("🚨🚨🚨 DATABASE INITIALIZING NYOOOM 🚨🚨🚨");
+  } catch (err: any) {
+    console.log(err.message);
+  }
 };
 
 module.exports = { connectDB };
