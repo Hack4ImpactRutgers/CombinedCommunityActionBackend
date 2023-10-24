@@ -22,7 +22,6 @@ router.get("/:id", (req: Request, res: Response) => {
 
 // Route to create and save a new admin
 router.post("/", (req: Request, res: Response) => {
-  console.log("Request Body:", req.body);
   const newAdmin = new Admin(req.body);
   newAdmin
     .save()

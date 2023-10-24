@@ -22,7 +22,6 @@ router.get("/:id", (req: Request, res: Response) => {
 
 // Route to create and save a new client
 router.post("/", /* [auth, adminAuth], */ (req: Request, res: Response) => {
-  console.log("Request Body:", req.body);
   const newClient = new Client(req.body);
   newClient
     .save()
