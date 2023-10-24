@@ -7,10 +7,12 @@ import clientRoute from "./routes/client_route";
 
 dotenv.config();
 
-
 // Express setup
 export const app: Express = express();
 const port = process.env.PORT;
+
+// Add this middleware to parse JSON request bodies
+app.use(express.json());
 
 app.use("/admin", adminRoute);
 app.use("/volunteer", volunteerRoute);
@@ -21,4 +23,3 @@ connectDB();
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
-
