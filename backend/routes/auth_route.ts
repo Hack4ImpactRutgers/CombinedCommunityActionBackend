@@ -56,7 +56,11 @@ router.post("/login", (req, res) => {
   }
   // we know that this OTP is valid
   // create a JWT token and send it to the browser
-  const token = jwt.sign({ email }, TOKEN_SECRET as Secret);
+
+  const token = jwt.sign({ 
+    email: email,
+    /* roles: ["admin", "volunteer"] */ // add roles to the token payload like this
+  }, TOKEN_SECRET as Secret);
   res.cookie("token", token, { httpOnly: true });
   res.json("OTP verified, user logged in");
 });
