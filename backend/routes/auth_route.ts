@@ -2,6 +2,7 @@ import express from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
+import EmailToBeApproved from "../schemas/emails_schema";
 
 const router = express.Router();
 const TOKEN_SECRET = process.env.TOKEN_SECRET; 
@@ -13,6 +14,22 @@ const transport = nodemailer.createTransport({
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
   },
+});
+
+// Endpoint to request signup
+router.post("volunteer/signup", async (req, res) => {
+  const { email } = req.body;
+
+  // Check if the email already exists in the emailsToBeApproved collection
+  const existingEmail = await EmailToBeApproved.findOne({ email });
+  if (existingEmail) {
+    return res.status(400).json("Email already exists");
+  }
+
+  // Save the email in the emailsToBeApproved collection
+  const newEmail = new EmailToBeApproved({ email });
+  await newEmail.save();
+  res.json("Signup request sent");
 });
 
 // Generate a random 6 digit number
@@ -56,7 +73,7 @@ router.post("/otp/request-otp", async (req, res) => {
 });
 
 // Endpoint to login using OTP
-router.post("/login", async (req, res) => {
+router.post("volunteer/login", async (req, res) => {
   const { email, otp } = req.body;
 
   if (!email || !otp) {
@@ -75,7 +92,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Endpoint to logout
-router.post("/logout", (req, res) => {
+router.post("volunteer/logout", (req, res) => {
   res.clearCookie("token");
   res.json("User logged out");
 });
