@@ -26,8 +26,3 @@ connectDB();
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
-
-
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/`);
-});
