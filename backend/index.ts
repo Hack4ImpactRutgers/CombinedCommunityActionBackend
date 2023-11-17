@@ -10,6 +10,7 @@ dotenv.config();
 
 // Express setup
 export const app: Express = express();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const port = process.env.PORT;
 
 // Add this middleware to parse JSON request bodies
