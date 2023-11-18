@@ -20,6 +20,26 @@ router.get("/:id", (req: Request, res: Response) => {
     });
 });
 
+//Route to add an "isVerified" field to those who are waiting to be verified
+router.post("/", /* [auth, admin], */(req: Request, res:Response)=>{
+  const newVolunteer = new Volunteer({
+    ...req.body,
+    isVerified : false, // we should have a isVerified field for the volunteers
+  });
+
+  newVolunteer
+    .save()
+    .then((volunteer:any)=>{
+      res.status(201).send(volunteer);
+    })
+    .catch((err:any) =>{
+      console.error(err);
+      res.status(400).send({ error: err.message });
+    });
+
+    
+});
+
 // Route to create and save a new volunteer
 router.post("/", /* [auth, admin], */ (req: Request, res: Response) => {
   const newVolunteer = new Volunteer(req.body);
