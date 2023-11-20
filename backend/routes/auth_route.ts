@@ -112,7 +112,11 @@ router.post("/volunteer/login", async (req, res) => {
   }
 
   // Create a JWT token and send it to the browser as a cookie
-  const token = jwt.sign({ email }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry
+
+  const token = jwt.sign({ 
+    email: email,
+    /* roles: ["admin", "volunteer"] */ // add roles to the token payload like this
+  }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry
   res.cookie("token", token, { httpOnly: true });
   res.json("OTP verified, user logged in");
 });

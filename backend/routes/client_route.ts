@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import Client from "../schemas/client_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch a client by its ID
@@ -21,7 +23,7 @@ router.get("/:id", (req: Request, res: Response) => {
 });
 
 // Route to create and save a new client
-router.post("/", /* [auth, adminAuth], */ (req: Request, res: Response) => {
+router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
   const newClient = new Client(req.body);
   newClient
     .save()

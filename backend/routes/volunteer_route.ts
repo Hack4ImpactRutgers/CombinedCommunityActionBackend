@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import Volunteer from "../schemas/volunteer_schema";
 import PendingVolunteer from "../schemas/pending_volunteer_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch a volunteer by its ID
@@ -24,7 +26,7 @@ router.get("/:id", (req: Request, res: Response) => {
 
 
 // Route to create and save a new volunteer into pendingVolunteer collection
-router.post("/", /* [auth, admin], */ (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   const newVolunteer = new PendingVolunteer(req.body);
   newVolunteer
     .save()
@@ -40,7 +42,7 @@ router.post("/", /* [auth, admin], */ (req: Request, res: Response) => {
 });
 
 //Route to move a volunteer from Pending Volunteer to Volunteer
-router.post("/verify/:id", /*[auth, admin]*/ async (req: Request, res: Response)=>{
+router.post("/verify/:id", [auth, roles.admin], async (req: Request, res: Response)=>{
   try{
     const pendingVolunteer = await(PendingVolunteer.findById(req.params.id));
 
@@ -55,7 +57,7 @@ router.post("/verify/:id", /*[auth, admin]*/ async (req: Request, res: Response)
     res.status(200).send(newVolunteer);
   } catch (err){
     console.error(err);
-    res.status(500).send({ error: "An error occured while verifying."})
+    res.status(500).send({ error: "An error occured while verifying."});
   }
 });
 

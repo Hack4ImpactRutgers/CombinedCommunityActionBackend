@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import Admin from "../schemas/admin_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch an admin by its ID
@@ -21,7 +23,7 @@ router.get("/:id", (req: Request, res: Response) => {
 });
 
 // Route to create and save a new admin
-router.post("/", (req: Request, res: Response) => {
+router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
   const newAdmin = new Admin(req.body);
   newAdmin
     .save()
