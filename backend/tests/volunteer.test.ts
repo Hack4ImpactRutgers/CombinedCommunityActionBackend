@@ -8,10 +8,19 @@ import EmailToBeApproved from "../schemas/emails_schema";
 // Describe the test suite for Authentication and Signup Route Tests
 describe("Authentication and Signup Route Tests", () => {
   let server: Server;
+  let testOTP: string;
 
   // Before running any tests, set up the server and clear the emailsToBeApproved collection
   beforeAll(async () => {
     server = app.listen();
+
+    // Generate an OTP for testing the login route
+    const savedOTP = new OTP({ 
+      email:"test@example.com", 
+      OTP:"54321", 
+      expiresAt: new Date(Date.now() + 5 * 60000) 
+    }).save();
+    testOTP = (await savedOTP).otp;
 
     // Clear the emailsToBeApproved collection before running tests
     await EmailToBeApproved.deleteMany({});
@@ -61,6 +70,15 @@ describe("Authentication and Signup Route Tests", () => {
   describe("POST /volunteer/login", () => {
     it("should log in with a valid OTP and return a JWT token", async () => {
       // TODO: Send a POST request to log in with a valid OTP
+      const user_email = "test@example.com";
+      // Send a POST request to generate OTP.
+      const response = await request(server)
+        .post("/volunteer/login")
+        .send({ email: user_email, otp: testOTP });
+
+      // Expect an error response with a status code of 200 and a specific success message.
+      expect(response.status).toBe(200);
+      expect(response.body).toBe("OTP verified, user logged in");
     });
 
     it("should return an error for invalid OTP", async () => {
