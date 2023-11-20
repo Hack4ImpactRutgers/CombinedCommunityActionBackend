@@ -89,8 +89,6 @@ describe("Admin Registration and Authentication Tests", () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toBe("Password verified, admin logged in");
-
-
     });
 
     it("Login with incorrect credentials", async () => {
@@ -139,7 +137,7 @@ describe("Admin Registration and Authentication Tests", () => {
       });
 
       const result = jwt.verify(receivedToken, process.env.TOKEN_SECRET as Secret);
-      expect(result).toBeTruthy();
+      expect(result).toBeTruthy(); // if the token is not valid, then we should get an error before getting here
     });
   });
 });
