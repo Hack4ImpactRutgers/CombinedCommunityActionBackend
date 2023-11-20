@@ -53,7 +53,7 @@ router.post("/register", [auth, roles.admin], async (req: Request, res: Response
 
   newAdmin.save()
     .then(() => {
-      // Respond with the created admin data and a 201 status code
+      // Respond with a success message and a 201 status code
       res.status(201).json("Admin successfully registered");
     })
     .catch((err: any) => {
