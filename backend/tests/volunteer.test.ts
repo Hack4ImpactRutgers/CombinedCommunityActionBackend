@@ -17,7 +17,7 @@ describe("Authentication and Signup Route Tests", () => {
     // Generate an OTP for testing the login route
     const savedOTP = new OTP({ 
       email:"test@example.com", 
-      OTP:"54321", 
+      otp:"54321", 
       expiresAt: new Date(Date.now() + 5 * 60000) 
     }).save();
     testOTP = (await savedOTP).otp;
