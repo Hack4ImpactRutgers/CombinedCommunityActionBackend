@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import Volunteer from "../schemas/volunteer_schema";
-import PendingVolunteer from "../schemas/pending_volunteer_schema";
-import auth from "../middleware/auth";
-import roles from "../middleware/roles";
+// import PendingVolunteer from "../schemas/pending_volunteer_schema";
+// import auth from "../middleware/auth";
+// import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch a volunteer by its ID
@@ -23,7 +23,26 @@ router.get("/:id", (req: Request, res: Response) => {
     });
 });
 
+// Route to create and save a new volunteer
+router.post("/", /* [auth, admin], */ (req: Request, res: Response) => {
+  const newVolunteer = new Volunteer(req.body);
+  newVolunteer
+    .save()
+    .then((volunteer: any) => {
+      // Respond with the created volunteer data and a 201 status code
+      res.status(201).send(volunteer);
+    })
+    .catch((err: any) => {
+      // Log the error and respond with a 400 status code
+      console.error(err);
+      res.status(400).send({ error: err.message });
+    });
+});
 
+/*
+
+NOTE: If you uncomment this, please make sure that the tests run properly: 'npm run test'
+If the tests fail, please modify the tests to reflect the changes made here.
 
 // Route to create and save a new volunteer into pendingVolunteer collection
 router.post("/", (req: Request, res: Response) => {
@@ -40,6 +59,7 @@ router.post("/", (req: Request, res: Response) => {
       res.status(400).send({ error: err.message });
     });
 });
+
 
 //Route to move a volunteer from Pending Volunteer to Volunteer
 router.post("/verify/:id", [auth, roles.admin], async (req: Request, res: Response)=>{
@@ -60,5 +80,6 @@ router.post("/verify/:id", [auth, roles.admin], async (req: Request, res: Respon
     res.status(500).send({ error: "An error occured while verifying."});
   }
 });
+*/ 
 
 export default router;

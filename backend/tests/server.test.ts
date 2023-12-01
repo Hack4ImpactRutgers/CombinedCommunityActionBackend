@@ -5,6 +5,20 @@ import { Server } from "http";
 import Admin from "../schemas/admin_schema";
 import Client from "../schemas/client_schema";
 import Volunteer from "../schemas/volunteer_schema";
+import { Request, Response, NextFunction } from "express";
+
+// Mock the auth middleware
+jest.mock("../middleware/auth", () => {
+  return jest.fn((req: Request, res: Response, next: NextFunction) => next());
+});
+
+// Mock the roles middleware
+jest.mock("../middleware/roles", () => {
+  return {
+    admin: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    volunteer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    client: jest.fn((req: Request, res: Response, next: NextFunction) => next()) };
+});
 
 describe("Express + TypeScript Server Tests", () => {
   let server: Server;
