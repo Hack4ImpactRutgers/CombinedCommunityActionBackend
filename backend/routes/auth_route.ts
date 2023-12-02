@@ -3,6 +3,8 @@ import jwt, { Secret } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
 import EmailToBeApproved from "../schemas/emails_schema";
+import Admin from "../schemas/admin_schema";
+import bcrypt from "bcryptjs";
 
 const router = express.Router();
 
@@ -119,7 +121,7 @@ router.post("/volunteer/login", async (req, res) => {
 
   const token = jwt.sign({
     email: email,
-    /* roles: ["admin", "volunteer"] */ // add roles to the token payload like this
+    roles: ["volunteer"]
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry
   res.cookie("token", token, { httpOnly: true });
   res.json("OTP verified, user logged in");
@@ -131,6 +133,46 @@ router.post("/volunteer/login", async (req, res) => {
 router.post("/volunteer/logout", (req, res) => {
   res.clearCookie("token");
   res.json("User logged out");
+});
+
+/**
+ * Endpoint to request admin login. 
+ * 
+ * Grants a JWT to the admin if the provided email and password is correct, 
+ * and sends it to the browser as a cookie.
+ */
+router.post("/admin/login", async (req, res) => {
+  const { email, password } = req.body;
+  
+  // search for admin
+  const admin = await Admin.findOne({ email: email });
+  if(!admin) {
+    return res.status(400).json("Invalid email or password");
+  }
+
+  // check provided password
+  const same = await bcrypt.compare(password, admin.password);
+  if(!same) {
+    return res.status(400).json("Invalid email or password");
+  }
+
+  // sign and send admin token to client
+  const token = jwt.sign({
+    name: admin.name,
+    email: admin.email,
+    roles: ["admin"],
+  }, TOKEN_SECRET as Secret, { expiresIn: "1h" });
+
+  res.cookie("token", token, { httpOnly: true });
+  res.status(200).json("Password verified, admin logged in");
+});
+
+/**
+ * Endpoint to log out an admin by clearing the JWT token cookie.
+ */
+router.post("/admin/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json("Admin logged out");
 });
 
 export default router;
