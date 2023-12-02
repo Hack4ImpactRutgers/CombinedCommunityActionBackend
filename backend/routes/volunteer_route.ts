@@ -23,27 +23,9 @@ router.get("/:id", (req: Request, res: Response) => {
     });
 });
 
-// Route to create and save a new volunteer
-router.post("/", [auth, roles.admin],(req: Request, res: Response) => {
-  const newVolunteer = new Volunteer(req.body);
-  newVolunteer
-    .save()
-    .then((volunteer: any) => {
-      // Respond with the created volunteer data and a 201 status code
-      res.status(201).send(volunteer);
-    })
-    .catch((err: any) => {
-      // Log the error and respond with a 400 status code
-      console.error(err);
-      res.status(400).send({ error: err.message });
-    });
-});
-
-
-
 //NOTE: If you uncomment this, please make sure that the tests run properly: 'npm run test'
 //If the tests fail, please modify the tests to reflect the changes made here.
-/*
+
 // Route to create and save a new volunteer into pendingVolunteer collection
 router.post("/", (req: Request, res: Response) => {
   const newVolunteer = new PendingVolunteer(req.body);
@@ -51,6 +33,7 @@ router.post("/", (req: Request, res: Response) => {
     .save()
     .then((volunteer: any) => {
       // Respond with the created volunteer data and a 201 status code
+      newVolunteer.save();
       res.status(201).send(volunteer);
     })
     .catch((err: any) => {
@@ -81,5 +64,4 @@ router.post("/verify/:id", [auth, roles.admin], async (req: Request, res: Respon
   }
 });
 
-*/
 export default router;
