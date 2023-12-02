@@ -3,6 +3,9 @@ import { Server } from "http";
 import jwt, { Secret } from "jsonwebtoken";
 import { app } from "../index";
 import mongoose from "mongoose";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
+import { Request, Response } from "express";
 
 describe("Middleware functions tests", () => {
   let server: Server;
@@ -12,6 +15,11 @@ describe("Middleware functions tests", () => {
 
   // Set up: start the server and create test tokens
   beforeAll(async () => {
+    // Mock a protected route
+    app.post("/protected", [auth, roles.admin], (req: Request, res: Response) => {
+      res.status(200).json("success");
+    });
+
     // Start the server
     server = app.listen();
 
@@ -35,31 +43,32 @@ describe("Middleware functions tests", () => {
   });
 
 
-  // Clean up: Close the server, delete test entry, and disconnect from the database
+  // Clean up: Close the server and disconnect from the database
   afterAll((done) => {
     server.close(() => {
-      mongoose.disconnect().then(() => { done(); });
+      mongoose.disconnect().then(() => {
+        done();
+      });
     });
   });
 
   // ADMIN AUTHENTICATION TESTS
   describe("Admin authentication tests", () => {
-    it("Admins should be able to verify volunteers", async () => {
+    it("Admins should access protected route", async () => {
       const response = await request(server)
-        .post("/volunteer/verify/123")
+        .post("/protected")
         .set("x-auth-token", adminToken);
 
-      // technically getting an error is correct, so long as we get past the auth callbacks 
-      expect(response.status).toBe(500);
-      expect(response.body.error).toBe("An error occured while verifying.");
+      expect(response.status).toBe(200);
+      expect(response.body).toBe("success");
     });
   });
 
   // VOLUNTEER AUTHENTICATION TESTS
   describe("Volunteer authentication tests", () => {
-    it("Volunteers should not be able to create new volunteers", async () => {
+    it("Volunteers should not be able to access the protected route", async () => {
       const response = await request(server)
-        .post("/volunteer/verify/123")
+        .post("/protected")
         .set("x-auth-token", volunteerToken);
 
       expect(response.status).toBe(403);
@@ -69,9 +78,9 @@ describe("Middleware functions tests", () => {
 
   // INVALID TOKEN AUTHENTICATION TESTS
   describe("Invalid token authentication tests", () => {
-    it("Invalid tokens should not be able to create new volunteers", async () => {
+    it("Invalid tokens should not be able to access the protected route", async () => {
       const response = await request(server)
-        .post("/volunteer/verify/123")
+        .post("/protected")
         .set("x-auth-token", invalidToken);
       
       expect(response.status).toBe(400);
@@ -81,9 +90,9 @@ describe("Middleware functions tests", () => {
 
   // NO TOKEN AUTHENTICATION TESTS
   describe("No token authentication tests", () => {
-    it("If a token is not provided, then we should not be able to create new volunteers", async () => {
+    it("If a token is not provided, then we should not be able to access the protected route", async () => {
       const response = await request(server)
-        .post("/volunteer/verify/123");
+        .post("/protected");
       
       expect(response.status).toBe(401);
       expect(response.body).toBe("No token, authorization denied");
