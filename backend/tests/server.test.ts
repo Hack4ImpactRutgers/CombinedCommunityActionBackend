@@ -31,7 +31,11 @@ describe("Express + TypeScript Server Tests", () => {
   beforeAll(async () => {
     server = app.listen();
 
-    const savedAdmin = await new Admin({ name: "Test Admin" }).save();
+    const savedAdmin = await new Admin({ 
+      name: "Test Admin", 
+      email: "test@admin.com",
+      password: "testpassword",
+    }).save();
     adminId = savedAdmin._id.toString();
 
     const savedClient = await new Client({
@@ -50,13 +54,16 @@ describe("Express + TypeScript Server Tests", () => {
       number: "123-456-7890"
     }).save();
     volunteerId = savedVolunteer._id.toString();
+
   });
 
   // Clean up: Close the server and disconnect from the database
   afterAll((done) => {
     server.close(() => {
-      mongoose.disconnect().then(() => {
-        done();
+      Admin.deleteOne({ name: "John Admin" }).then(() => {
+        mongoose.disconnect().then(() => {
+          done();
+        });
       });
     });
   });
@@ -76,7 +83,11 @@ describe("Express + TypeScript Server Tests", () => {
 
   // ADMIN ROUTE TESTS
   describe("Admin Route Tests", () => {
-    const newAdminData = { name: "John Doe" };
+    const newAdminData = {
+      name: "John Admin", 
+      email: "testadmin@email.com",
+      password: "testpassword",
+    };
 
     it("FETCH ADMIN BY ID", async () => {
       const response = await request(server).get(`/admin/${adminId}`);
@@ -85,9 +96,12 @@ describe("Express + TypeScript Server Tests", () => {
     });
 
     it("CREATE AND SAVE NEW ADMIN", async () => {
-      const response = await request(server).post("/admin").send(newAdminData);
+      const response = await request(server)
+        .post("/admin/register")
+        .send(newAdminData);
+
       expect(response.status).toBe(201);
-      expect(response.body.name).toEqual(newAdminData.name);
+      expect(response.body).toEqual("Admin successfully registered");
     });
   });
 
