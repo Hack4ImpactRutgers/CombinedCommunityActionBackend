@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import Volunteer from "../schemas/volunteer_schema";
- import PendingVolunteer from "../schemas/pending_volunteer_schema";
- import auth from "../middleware/auth";
- import roles from "../middleware/roles";
+import PendingVolunteer from "../schemas/pending_volunteer_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch a volunteer by its ID
@@ -24,7 +24,7 @@ router.get("/:id", (req: Request, res: Response) => {
 });
 
 // Route to create and save a new volunteer
-router.post("/", /* [auth, admin], */ (req: Request, res: Response) => {
+router.post("/", [auth, roles.admin],(req: Request, res: Response) => {
   const newVolunteer = new Volunteer(req.body);
   newVolunteer
     .save()
