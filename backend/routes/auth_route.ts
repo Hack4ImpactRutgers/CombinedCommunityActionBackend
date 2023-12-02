@@ -7,15 +7,17 @@ import EmailToBeApproved from "../schemas/emails_schema";
 const router = express.Router();
 
 // Load the secret key for JWT token from environment variables
-const TOKEN_SECRET = process.env.TOKEN_SECRET; 
+const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 // Setup Nodemailer to send emails using a Gmail account
 const transport = nodemailer.createTransport({
   service: "gmail",
+  port: 465,
+  secure: true, // use SSL
   auth: {
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD,
-  },
+  }
 });
 
 /**
@@ -66,6 +68,8 @@ function generateOTP() {
 router.post("/otp/request-otp", async (req, res) => {
   const { email } = req.body;
 
+  console.log(`TRANSPORT: ${transport}`);
+
   // Check if an unexpired OTP already exists
   const existingOTP = await OTP.findOne({ email, expiresAt: { $gt: new Date() } });
   if (existingOTP) {
@@ -113,7 +117,7 @@ router.post("/volunteer/login", async (req, res) => {
 
   // Create a JWT token and send it to the browser as a cookie
 
-  const token = jwt.sign({ 
+  const token = jwt.sign({
     email: email,
     /* roles: ["admin", "volunteer"] */ // add roles to the token payload like this
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry

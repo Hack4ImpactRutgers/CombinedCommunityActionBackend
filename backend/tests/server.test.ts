@@ -17,13 +17,14 @@ jest.mock("../middleware/roles", () => {
   return {
     admin: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
     volunteer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
-    client: jest.fn((req: Request, res: Response, next: NextFunction) => next()) };
+    client: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+  };
 });
 
 describe("Express + TypeScript Server Tests", () => {
   let server: Server;
   let adminId: string;
-  let clientId: string; 
+  let clientId: string;
   let volunteerId: string;
 
   // Set up: Start the server and populate the database with test entries
@@ -132,6 +133,13 @@ describe("Express + TypeScript Server Tests", () => {
       const response = await request(server).post("/volunteer").send(newVolunteerData);
       expect(response.status).toBe(201);
       expect(response.body.name).toEqual(newVolunteerData.name);
+    });
+
+    it("SEND OTP TO VOLUNTEER EMAIL", async () => {
+      const response = await request(server).post("/auth/otp/request-otp").send({
+        email: "anirvinv@gmail.com"
+      });
+      expect(response.status).toBe(200);
     });
   });
 });
