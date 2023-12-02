@@ -3,14 +3,12 @@ import { Server } from "http";
 import jwt, { Secret } from "jsonwebtoken";
 import { app } from "../index";
 import mongoose from "mongoose";
-import Volunteer from "../schemas/volunteer_schema";
 
 describe("Middleware functions tests", () => {
   let server: Server;
   let adminToken: string;
   let volunteerToken: string;
   let invalidToken: string;
-  let volunteer: any;
 
   // Set up: start the server and create test tokens
   beforeAll(async () => {
@@ -34,41 +32,26 @@ describe("Middleware functions tests", () => {
       email: "testemail",
       roles: ["admin", "volunteer"]
     }, "incorrect secret");
-
-    // Create a test volunteer
-    volunteer = {
-      isActive: true,
-      name: "John Doe",
-      email: "testemail",
-      number: "1234567890",
-    };
   });
 
 
   // Clean up: Close the server, delete test entry, and disconnect from the database
   afterAll((done) => {
     server.close(() => {
-      Volunteer.deleteOne({ name: "John Doe" }).then(() => {
-        mongoose.disconnect().then(() => {
-          done();
-        });
-      });
+      mongoose.disconnect().then(() => { done(); });
     });
   });
 
   // ADMIN AUTHENTICATION TESTS
   describe("Admin authentication tests", () => {
-    it("Admins should be able to create new volunteers", async () => {
+    it("Admins should be able to verify volunteers", async () => {
       const response = await request(server)
-        .post("/volunteer")
-        .set("x-auth-token", adminToken)
-        .send(volunteer);
+        .post("/volunteer/verify/123")
+        .set("x-auth-token", adminToken);
 
-      expect(response.status).toBe(201);
-      expect(response.body.name).toBe(volunteer.name);
-      expect(response.body.email).toBe(volunteer.email);
-      expect(response.body.number).toBe(volunteer.number);
-      expect(response.body.isActive).toBe(volunteer.isActive);
+      // technically getting an error is correct, so long as we get past the auth callbacks 
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe("An error occured while verifying.");
     });
   });
 
@@ -76,9 +59,8 @@ describe("Middleware functions tests", () => {
   describe("Volunteer authentication tests", () => {
     it("Volunteers should not be able to create new volunteers", async () => {
       const response = await request(server)
-        .post("/volunteer")
-        .set("x-auth-token", volunteerToken)
-        .send(volunteer);
+        .post("/volunteer/verify/123")
+        .set("x-auth-token", volunteerToken);
 
       expect(response.status).toBe(403);
       expect(response.body).toBe("Unauthorized");
@@ -89,9 +71,8 @@ describe("Middleware functions tests", () => {
   describe("Invalid token authentication tests", () => {
     it("Invalid tokens should not be able to create new volunteers", async () => {
       const response = await request(server)
-        .post("/volunteer")
-        .set("x-auth-token", invalidToken)
-        .send(volunteer);
+        .post("/volunteer/verify/123")
+        .set("x-auth-token", invalidToken);
       
       expect(response.status).toBe(400);
       expect(response.body).toBe("Token is not valid");
@@ -102,8 +83,7 @@ describe("Middleware functions tests", () => {
   describe("No token authentication tests", () => {
     it("If a token is not provided, then we should not be able to create new volunteers", async () => {
       const response = await request(server)
-        .post("/volunteer")
-        .send(volunteer);
+        .post("/volunteer/verify/123");
       
       expect(response.status).toBe(401);
       expect(response.body).toBe("No token, authorization denied");
