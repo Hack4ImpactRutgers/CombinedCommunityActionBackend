@@ -59,11 +59,15 @@ describe("Express + TypeScript Server Tests", () => {
 
   // Clean up: Close the server and disconnect from the database
   afterAll((done) => {
-    server.close(() => {
-      Admin.deleteOne({ name: "John Admin" }).then(() => {
-        mongoose.disconnect().then(() => {
-          done();
-        });
+    server.close(async () => {
+      await Admin.deleteOne({ name: "Test Admin" });
+      await Admin.deleteOne({ name: "John Admin" });
+      await Client.deleteOne({ name: "Test Client" });
+      await Client.deleteOne({ name: "Jane Client" });
+      await Volunteer.deleteOne({ name: "Test Volunteer" });
+
+      mongoose.disconnect().then(() => {
+        done();
       });
     });
   });
@@ -85,7 +89,7 @@ describe("Express + TypeScript Server Tests", () => {
   describe("Admin Route Tests", () => {
     const newAdminData = {
       name: "John Admin", 
-      email: "testadmin@email.com",
+      email: "johnadmin@email.com",
       password: "testpassword",
     };
 
