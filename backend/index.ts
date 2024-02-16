@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { connectDB } from "./connectDB";
 import adminRoute from "./routes/admin_route";
 import volunteerRoute from "./routes/volunteer_route";
@@ -15,6 +16,7 @@ const port = process.env.PORT;
 
 // Add this middleware to parse JSON request bodies
 app.use(express.json());
+app.use(cors());
 
 app.use("/admin", adminRoute);
 app.use("/volunteer", volunteerRoute);
@@ -27,3 +29,9 @@ connectDB();
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
+
+if(process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`Server started on http://localhost:${port}`);
+  });
+}

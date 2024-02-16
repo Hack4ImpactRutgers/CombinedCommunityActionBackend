@@ -37,7 +37,7 @@ describe("Admin Registration and Authentication Tests", () => {
   describe("Admin registration tests", () => {
     it("Register with admin privileges and not all fields set", async () => {
       const response = await request(server)
-        .post("/admin/register")
+        .post("/auth/admin/register")
         .set("x-auth-token", token)
         .send({ 
           name: test_name,
@@ -50,7 +50,7 @@ describe("Admin Registration and Authentication Tests", () => {
 
     it("Register with admin privileges and all fields set", async () => {
       const response = await request(server)
-        .post("/admin/register")
+        .post("/auth/admin/register")
         .set("x-auth-token", token)
         .send({ 
           name: test_name,
@@ -64,7 +64,7 @@ describe("Admin Registration and Authentication Tests", () => {
 
     it("Attempt to register an existing admin ", async () => {
       const response = await request(server)
-        .post("/admin/register")
+        .post("/auth/admin/register")
         .set("x-auth-token", token)
         .send({ 
           name: test_name,
@@ -129,7 +129,6 @@ describe("Admin Registration and Authentication Tests", () => {
       const cookie = response.header["set-cookie"][0];
       let receivedToken: any;
       
-      console.log(cookie);
       cookie.split(";").forEach((cookiePart: string) => {
         if (cookiePart.includes("token")) {
           receivedToken = cookiePart.split("=")[1];

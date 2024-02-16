@@ -87,25 +87,10 @@ describe("Express + TypeScript Server Tests", () => {
 
   // ADMIN ROUTE TESTS
   describe("Admin Route Tests", () => {
-    const newAdminData = {
-      name: "John Admin", 
-      email: "johnadmin@email.com",
-      password: "testpassword",
-    };
-
     it("FETCH ADMIN BY ID", async () => {
       const response = await request(server).get(`/admin/${adminId}`);
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("name");
-    });
-
-    it("CREATE AND SAVE NEW ADMIN", async () => {
-      const response = await request(server)
-        .post("/admin/register")
-        .send(newAdminData);
-
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual("Admin successfully registered");
     });
   });
 
@@ -155,7 +140,7 @@ describe("Express + TypeScript Server Tests", () => {
 
     it("SEND OTP TO VOLUNTEER EMAIL", async () => {
       const response = await request(server).post("/auth/otp/request-otp").send({
-        email: "anirvinv@gmail.com"
+        email: "mukunda.rayden@farmoaks.com"
       });
       expect(response.status).toBe(200);
     });

@@ -4,6 +4,21 @@ import { app } from "../index"; // Adjust the import path as needed
 import { Server } from "http";
 import OTP from "../schemas/otp_schema";
 import EmailToBeApproved from "../schemas/emails_schema";
+import { Request, Response, NextFunction } from "express";
+
+// Mock the auth middleware
+jest.mock("../middleware/auth", () => {
+  return jest.fn((req: Request, res: Response, next: NextFunction) => next());
+});
+
+// Mock the roles middleware
+jest.mock("../middleware/roles", () => {
+  return {
+    admin: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    volunteer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    client: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+  };
+});
 
 // Describe the test suite for Authentication and Signup Route Tests
 describe("Authentication and Signup Route Tests", () => {
@@ -73,7 +88,7 @@ describe("Authentication and Signup Route Tests", () => {
       const user_email = "test@example.com";
       // Send a POST request to generate OTP.
       const response = await request(server)
-        .post("/volunteer/login")
+        .post("/auth/volunteer/login")
         .send({ email: user_email, otp: testOTP });
 
       // Expect an error response with a status code of 200 and a specific success message.

@@ -1,10 +1,16 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
 import EmailToBeApproved from "../schemas/emails_schema";
 import Admin from "../schemas/admin_schema";
 import bcrypt from "bcryptjs";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
+import PasswordChangeRequest from "../schemas/password_change_schema";
+import crypto from "crypto";
+
+const saltRounds = 10;
 
 const router = express.Router();
 
@@ -89,7 +95,7 @@ router.post("/otp/request-otp", async (req, res) => {
     });
 
     // Save the OTP with an expiration of 5 minutes
-    const newOTP = new OTP({ email, otp, expiresAt: new Date(Date.now() + 5 * 60000) });
+    const newOTP = new OTP({ email, otp });
     await newOTP.save();
     res.json("Email sent");
   } catch (err) {
@@ -112,7 +118,7 @@ router.post("/volunteer/login", async (req, res) => {
   }
 
   // Check if the provided OTP is valid and not expired
-  const validOTP = await OTP.findOne({ email, otp, expiresAt: { $gt: new Date() } });
+  const validOTP = await OTP.findOne({ email, otp });
   if (!validOTP) {
     return res.status(400).json("Invalid OTP");
   }
@@ -134,6 +140,45 @@ router.post("/volunteer/logout", (req, res) => {
   res.clearCookie("token");
   res.json("User logged out");
 });
+
+/**
+ * Endpoint to register an admin.
+ * 
+ * Requires admin privileges.
+ */
+router.post("/admin/register", [auth, roles.admin], async (req: Request, res: Response) => {
+  const { name, email, password } = req.body;
+
+  // validate request
+  if(!name || !email || !password) {
+    return res.status(400).json("Please enter all fields");
+  }
+
+  const admin = await Admin.findOne({ email: email });
+  if(admin) {
+    return res.status(400).json("Admin already exists");
+  }
+
+  const hash = bcrypt.hashSync(password, saltRounds);
+  
+  const newAdmin = new Admin({
+    name: name,
+    email: email,
+    password: hash
+  });
+
+  newAdmin.save()
+    .then(() => {
+      // Respond with a success message and a 201 status code
+      res.status(201).json("Admin successfully registered");
+    })
+    .catch((err: any) => {
+      // Log the error and respond with a 400 status code
+      console.error(err);
+      res.status(400).send({ error: err.message });
+    });
+});
+
 
 /**
  * Endpoint to request admin login. 
@@ -173,6 +218,126 @@ router.post("/admin/login", async (req, res) => {
 router.post("/admin/logout", (req, res) => {
   res.clearCookie("token");
   res.json("Admin logged out");
+});
+
+
+/**
+ * Password Change Request Flow:
+ * 1. User requests a password change by providing their email.
+ *  a. Frontend sends a POST request to /auth/admin/forgot-password with the email in the request body.
+ *  b. Regardless of whether or not the email exists, a status 200 is returned (to prevent email enumeration).
+ * 2. We create the password change request in the database (if the email exists)
+ *  a. We generate a password request token (CSPRNG string), hash it, and save it in the database with the user's email.
+ *  b. Note that we don't send the resetToken to the user, but rather a jwt containing the resetToken and the user's email.
+ *  b. This request expires after 24 hours.
+ * 3. We send an email to the user with a link to the password change page.
+ *  a. The link has a query parameter containing the password change request token.
+ *  b. something like: /forgot-password?jwt=abc123
+ * 4. To change the password, hit the /auth/admin/verify-forgot-password endpoint with the provided token and the new password.
+ *  a. If the token is valid and not expired, we update the user's password and delete the password change request.
+ *  b. If the token is invalid or expired, we respond with an error ("This password change request has expired or is invalid").
+ * 
+ * TODO:
+ * - deal with multiple password change requests for the same user
+ * - need to test more thoroughly
+ */
+
+/**
+ * Endpoint to request a password reset.
+ * body:
+ * {
+ *  email: string
+ * }
+ */
+router.post("/admin/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json("Email required");
+  }
+  const user = await Admin.findOne({ email });
+  if (!user) {
+    return res.status(200).json("If a user with this email exists, an email will be sent to them.");
+  }
+
+  // generate the random token and hash it
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const hash = bcrypt.hashSync(resetToken, saltRounds);
+
+  // save the password change request in the database
+  const passwordChangeRequest = new PasswordChangeRequest({
+    email,
+    token: hash
+  });
+
+  // send the email with the password change link containing the a jwt with the reset token and the user's email
+  const token = jwt.sign({
+    email: email,
+    resetToken: resetToken
+  }, TOKEN_SECRET as Secret, { expiresIn: "24h" });
+  const emailLink = `${process.env.FRONTEND_URL}/auth/admin/forgot-password?jwt=${token}`;
+
+  await transport.sendMail({
+    from: process.env.EMAIL,
+    to: email,
+    subject: "[CCA] Password Change Request",
+    html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.`
+  });
+  
+  passwordChangeRequest.save().then(() => {
+    res.status(200).json("If a user with this email exists, an email will be sent to them.");
+  })
+  .catch((err: any) => {
+    console.error(err);
+    res.status(500).json("An error occurred while processing your request");
+  });
+});
+
+/**
+ * Endpoint to verify a password change request.
+ * The token should be the JWT provided in the email link
+ * body:
+ * {
+ *  token: string,
+ *  password: string,
+ * }
+ */
+router.post("/admin/verify-forgot-password", async (req, res) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return res.status(400).json("Token and password required");
+  }
+
+  // find the password change request
+  const decoded = jwt.verify(token, TOKEN_SECRET as Secret) as { email: string, resetToken: string };
+  const request = await PasswordChangeRequest.findOne({ email: decoded.email });
+  if (!request) {
+    return res.status(400).json("This password change request has expired or is invalid");
+  }
+
+  // check if the token is valid
+  const valid = await bcrypt.compare(decoded.resetToken, request.token);
+  if (!valid) {
+    return res.status(400).json("This password change request has expired or is invalid");
+  }
+
+  // update the user's password
+  const user = await Admin.findOne({ email: request.email });
+  if(!user) {
+    return res.status(400).json("User not found");
+  }
+  await request.deleteOne();
+
+  user.password = bcrypt.hashSync(password, saltRounds);
+  await user.save().then(() => {
+    res.status(200).json("Password updated");
+  })
+  .catch((err: any) => {
+    console.error(err);
+    res.status(500).json("An error occurred while updating the password");
+  });
+
 });
 
 export default router;
