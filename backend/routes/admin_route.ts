@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import Admin from "../schemas/admin_schema";
+
 const router = express.Router();
 
 // Route to fetch an admin by its ID
@@ -17,22 +18,6 @@ router.get("/:id", (req: Request, res: Response) => {
       // Log the error and respond with a 500 status code
       console.error(err);
       res.status(500).send({ error: "An error occurred fetching the admin." });
-    });
-});
-
-// Route to create and save a new admin
-router.post("/", (req: Request, res: Response) => {
-  const newAdmin = new Admin(req.body);
-  newAdmin
-    .save()
-    .then((admin: any) => {
-      // Respond with the created admin data and a 201 status code
-      res.status(201).send(admin);
-    })
-    .catch((err: any) => {
-      // Log the error and respond with a 400 status code
-      console.error(err);
-      res.status(400).send({ error: err.message });
     });
 });
 
