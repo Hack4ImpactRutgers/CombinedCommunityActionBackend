@@ -1,0 +1,43 @@
+name: ci
+on:
+  push:
+    branches:
+    - master
+    - auto_testing
+
+env: 
+  PORT: '8000'
+  MONGODB_URI: 'mongodb://127.0.0.1:27017'
+  TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+  EMAIL: ${{ secrets.EMAIL }}
+  EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+  NODE_ENV: 'test'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        mongodb-version: ['7.0']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: start mongodb
+      uses: supercharge/mongodb-github-action@1.10.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+
+    - name: install dependencies
+      run: npm ci
+    
+    - name: run tests
+      run: npm run test
+
