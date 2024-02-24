@@ -14,7 +14,7 @@ env:
   NODE_ENV: 'test'
 
 jobs:
-  build:
+  testing:
     runs-on: ubuntu-latest
 
     strategy:
