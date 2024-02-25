@@ -14,6 +14,8 @@ export const app: Express = express();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const port = process.env.PORT;
 
+const DEV = process.env.NODE_ENV === "DEV";
+
 // Add this middleware to parse JSON request bodies
 app.use(express.json());
 app.use(cors());
@@ -29,5 +31,11 @@ connectDB();
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
+
+if (DEV) {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
 export default app;
