@@ -1,10 +1,8 @@
 import express, { Request, Response } from "express";
 import Client from "../schemas/client_schema";
-import { petSchema } from "../schemas/client_schema";
 import auth from "../middleware/auth";
 import roles from "../middleware/roles";
 import mongoose from "mongoose";
-import { assert } from "console";
 const router = express.Router();
 
 router.get("/all", (req: Request, res: Response) => {
@@ -61,10 +59,10 @@ router.patch("/:id", (req: Request, res: Response) => {
    * If a field is not provided, it will remain unchanged
    */
 
-  let { id } = req.params;
-  let { name, age, address, region, pets } = req.body;
+  const { id } = req.params;
+  const { name, age, address, region, pets } = req.body;
 
-  let oldClient = Client.findById(id);
+  const oldClient = Client.findById(id);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({ error: "Invalid client ID." });
   }
@@ -75,7 +73,7 @@ router.patch("/:id", (req: Request, res: Response) => {
     return res.status(400).send({ error: "No client data provided." });
   }
 
-  let newValues: { name?: string, age?: number, address?: string, region?: string, pets?: any[], [key: string]: any } = {};
+  const newValues: { name?: string, age?: number, address?: string, region?: string, pets?: any[], [key: string]: any } = {};
   if (name) newValues["name"] = name;
   if (age) newValues["age"] = age;
   if (address) newValues["address"] = address;
@@ -83,13 +81,13 @@ router.patch("/:id", (req: Request, res: Response) => {
   if (pets) newValues["pets"] = pets;
 
   // find values of newClient that are undefined and fill it with the oldClient values
-  for (let key in oldClient) {
+  for (const key in oldClient) {
     if (newValues[key] == undefined) {
       newValues[key] = oldClient.get(key);
     }
   }
 
-  let updatedClient = new Client(newValues);
+  const updatedClient = new Client(newValues);
   updatedClient.validateSync();
   if (updatedClient.errors) {
     return res.status(400).send({ error: updatedClient.errors });
@@ -102,8 +100,7 @@ router.patch("/:id", (req: Request, res: Response) => {
     res.send(client);
   }
   ).catch((err: any) => {
-    console.error(err);
-    res.status(500).send({ error: "An error occurred updating the client." });
+    res.status(500).send({ error: err });
   });
 });
 
