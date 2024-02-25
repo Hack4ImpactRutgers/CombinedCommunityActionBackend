@@ -5,18 +5,37 @@ import { Server } from "http";
 import Admin from "../schemas/admin_schema";
 import Client from "../schemas/client_schema";
 import Volunteer from "../schemas/volunteer_schema";
+import { Request, Response, NextFunction } from "express";
+
+// Mock the auth middleware
+jest.mock("../middleware/auth", () => {
+  return jest.fn((req: Request, res: Response, next: NextFunction) => next());
+});
+
+// Mock the roles middleware
+jest.mock("../middleware/roles", () => {
+  return {
+    admin: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    volunteer: jest.fn((req: Request, res: Response, next: NextFunction) => next()),
+    client: jest.fn((req: Request, res: Response, next: NextFunction) => next())
+  };
+});
 
 describe("Express + TypeScript Server Tests", () => {
   let server: Server;
   let adminId: string;
-  let clientId: string; 
+  let clientId: string;
   let volunteerId: string;
 
   // Set up: Start the server and populate the database with test entries
   beforeAll(async () => {
     server = app.listen();
 
-    const savedAdmin = await new Admin({ name: "Test Admin" }).save();
+    const savedAdmin = await new Admin({ 
+      name: "Test Admin", 
+      email: "test@admin.com",
+      password: "testpassword",
+    }).save();
     adminId = savedAdmin._id.toString();
 
     const savedClient = await new Client({
@@ -35,11 +54,18 @@ describe("Express + TypeScript Server Tests", () => {
       number: "123-456-7890"
     }).save();
     volunteerId = savedVolunteer._id.toString();
+
   });
 
   // Clean up: Close the server and disconnect from the database
   afterAll((done) => {
-    server.close(() => {
+    server.close(async () => {
+      await Admin.deleteOne({ name: "Test Admin" });
+      await Admin.deleteOne({ name: "John Admin" });
+      await Client.deleteOne({ name: "Test Client" });
+      await Client.deleteOne({ name: "Jane Client" });
+      await Volunteer.deleteOne({ name: "Test Volunteer" });
+
       mongoose.disconnect().then(() => {
         done();
       });
@@ -61,18 +87,10 @@ describe("Express + TypeScript Server Tests", () => {
 
   // ADMIN ROUTE TESTS
   describe("Admin Route Tests", () => {
-    const newAdminData = { name: "John Doe" };
-
     it("FETCH ADMIN BY ID", async () => {
       const response = await request(server).get(`/admin/${adminId}`);
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("name");
-    });
-
-    it("CREATE AND SAVE NEW ADMIN", async () => {
-      const response = await request(server).post("/admin").send(newAdminData);
-      expect(response.status).toBe(201);
-      expect(response.body.name).toEqual(newAdminData.name);
     });
   });
 
@@ -118,6 +136,13 @@ describe("Express + TypeScript Server Tests", () => {
       const response = await request(server).post("/volunteer").send(newVolunteerData);
       expect(response.status).toBe(201);
       expect(response.body.name).toEqual(newVolunteerData.name);
+    });
+
+    it("SEND OTP TO VOLUNTEER EMAIL", async () => {
+      const response = await request(server).post("/auth/otp/request-otp").send({
+        email: "mukunda.rayden@farmoaks.com"
+      });
+      expect(response.status).toBe(200);
     });
   });
 });

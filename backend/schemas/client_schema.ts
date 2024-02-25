@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const petSchema = new mongoose.Schema({
-  isActive: {type: Boolean, required: true},
+  isActive: { type: Boolean, required: true },
   animal: { type: String, required: true },
   vet: { type: Boolean, required: true, default: false },
   food: {
@@ -11,12 +11,14 @@ const petSchema = new mongoose.Schema({
 }, { _id: false });
 
 const clientSchema = new mongoose.Schema({
-  name: {type: String, required: true},
+  name: { type: String, required: true },
   age: Number,
   address: String,
   region: String,
   pets: [petSchema]
 });
 const Client = mongoose.model("Client", clientSchema);
+
+export { petSchema, Client };
 
 export default Client;
