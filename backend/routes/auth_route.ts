@@ -287,10 +287,10 @@ router.post("/admin/forgot-password", async (req, res) => {
   passwordChangeRequest.save().then(() => {
     res.status(200).json("If a user with this email exists, an email will be sent to them.");
   })
-  .catch((err: any) => {
-    console.error(err);
-    res.status(500).json("An error occurred while processing your request");
-  });
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500).json("An error occurred while processing your request");
+    });
 });
 
 /**
@@ -333,10 +333,10 @@ router.post("/admin/verify-forgot-password", async (req, res) => {
   await user.save().then(() => {
     res.status(200).json("Password updated");
   })
-  .catch((err: any) => {
-    console.error(err);
-    res.status(500).json("An error occurred while updating the password");
-  });
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500).json("An error occurred while updating the password");
+    });
 
 });
 
