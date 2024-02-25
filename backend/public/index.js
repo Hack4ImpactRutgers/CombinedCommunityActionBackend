@@ -28,8 +28,4 @@ exports.app.use("/auth", auth_route_1.default);
 exports.app.get("/", (req, res) => {
     res.send("Express + TypeScript Server");
 });
-if (process.env.NODE_ENV !== "test") {
-    exports.app.listen(port, () => {
-        console.log(`Server started on http://localhost:${port}`);
-    });
-}
+exports.default = exports.app;

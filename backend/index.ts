@@ -30,8 +30,4 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-if(process.env.NODE_ENV !== "test") {
-  app.listen(port, () => {
-    console.log(`Server started on http://localhost:${port}`);
-  });
-}
+export default app;
