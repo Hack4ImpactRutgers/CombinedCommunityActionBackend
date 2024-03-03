@@ -24,6 +24,7 @@ router.post("/", [auth], async (req: Request, res: Response) => {
       supplies,
       needs,
       updated,
+      selectedDate,
       orderId, // This must be provided in the body to link the report to the order
       volunteerId // This must be provided in the body to link the report to the volunteer
     } = req.body;
@@ -45,18 +46,19 @@ router.post("/", [auth], async (req: Request, res: Response) => {
       supplies,
       needs,
       updated,
+      selectedDate,
       order: orderId,
       volunteer: volunteerId
     });
 
     await deliveryReport.save();
 
-    // Update the order status based on the 'updated' field in the delivery report
-    const orderStatus = updated ? "successful" : "failed";
+    // Update the order status to "successful"
+    const orderStatus = "successful";
     await Order.findByIdAndUpdate(orderId, { status: orderStatus });
 
     // If the delivery report indicates that an update is needed, set the needsUpdate flag for the client
-    if (needs) {
+    if (updated) {
       const order = await Order.findById(orderId);
       if (order && order.client) {
         await Client.findByIdAndUpdate(order.client, { needsUpdate: true });
