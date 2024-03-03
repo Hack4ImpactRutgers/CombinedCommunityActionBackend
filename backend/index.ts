@@ -6,6 +6,8 @@ import adminRoute from "./routes/admin_route";
 import volunteerRoute from "./routes/volunteer_route";
 import clientRoute from "./routes/client_route";
 import authRoute from "./routes/auth_route";
+import deliveryReportRoute from "./routes/delivery_route";
+
 
 dotenv.config();
 

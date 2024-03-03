@@ -3,11 +3,12 @@ const { Schema, Types } = mongoose;
 
 const orderSchema = new mongoose.Schema(
   {
-    client: { type: Types.ObjectId, ref: 'Client', required: true },
-    assignedVolunteers: [{ type: Types.ObjectId, ref: 'Volunteer' }],
+    client: { type: Types.ObjectId, ref: "Client", required: true },
+    assignedVolunteers: [{ type: Types.ObjectId, ref: "Volunteer" }],
     createdOn: { type: Date },
     deliverBy: { type: Date },
-    cost: { type: Number }
+    cost: { type: Number },
+    status: { type: String, enum: ["pending", "successful", "failed"], default: "pending" },
   });
 
 const orderModel = mongoose.model("order", orderSchema);
