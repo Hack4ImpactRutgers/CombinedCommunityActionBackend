@@ -3,10 +3,11 @@ import DeliveryReport from "../schemas/delivery_report_schema";
 import Order from "../schemas/order_schema";
 import Client from "../schemas/client_schema";
 import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 
 const router = express.Router();
 
-router.post("/", [auth], async (req: Request, res: Response) => {
+router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) => {
   try {
     const {
       firstName,
