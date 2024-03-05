@@ -6,8 +6,7 @@ import adminRoute from "./routes/admin_route";
 import volunteerRoute from "./routes/volunteer_route";
 import clientRoute from "./routes/client_route";
 import authRoute from "./routes/auth_route";
-import deliveryReportRoute from "./routes/delivery_route";
-
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -21,6 +20,7 @@ const DEV = process.env.NODE_ENV === "DEV";
 // Add this middleware to parse JSON request bodies
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 app.use("/admin", adminRoute);
 app.use("/volunteer", volunteerRoute);
