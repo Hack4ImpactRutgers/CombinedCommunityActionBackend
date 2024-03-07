@@ -24,13 +24,13 @@ describe("Middleware functions tests", () => {
     server = app.listen();
 
     // Create a test admin token
-    adminToken = jwt.sign({ 
+    adminToken = jwt.sign({
       email: "testemail",
       roles: ["admin", "volunteer"]
     }, process.env.TOKEN_SECRET as Secret);
 
     // Create a test client token
-    volunteerToken = jwt.sign({ 
+    volunteerToken = jwt.sign({
       email: "testemail",
       roles: ["volunteer"]
     }, process.env.TOKEN_SECRET as Secret);
@@ -57,7 +57,7 @@ describe("Middleware functions tests", () => {
     it("Admins should access protected route", async () => {
       const response = await request(server)
         .post("/protected")
-        .set("x-auth-token", adminToken);
+        .set("Cookie", `token=${adminToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toBe("success");
@@ -69,7 +69,7 @@ describe("Middleware functions tests", () => {
     it("Volunteers should not be able to access the protected route", async () => {
       const response = await request(server)
         .post("/protected")
-        .set("x-auth-token", volunteerToken);
+        .set("Cookie", `token=${volunteerToken}`);
 
       expect(response.status).toBe(403);
       expect(response.body).toBe("Unauthorized");
@@ -81,8 +81,8 @@ describe("Middleware functions tests", () => {
     it("Invalid tokens should not be able to access the protected route", async () => {
       const response = await request(server)
         .post("/protected")
-        .set("x-auth-token", invalidToken);
-      
+        .set("Cookie", `token=${invalidToken}`);
+
       expect(response.status).toBe(400);
       expect(response.body).toBe("Token is not valid");
     });
@@ -93,7 +93,7 @@ describe("Middleware functions tests", () => {
     it("If a token is not provided, then we should not be able to access the protected route", async () => {
       const response = await request(server)
         .post("/protected");
-      
+
       expect(response.status).toBe(401);
       expect(response.body).toBe("No token, authorization denied");
     });
