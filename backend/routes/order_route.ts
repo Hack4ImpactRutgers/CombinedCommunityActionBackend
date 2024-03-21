@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import Order from "../schemas/order_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch an order by its ID
@@ -19,5 +21,18 @@ router.get("/:id", (req: Request, res: Response) => {
       res.status(500).send({ error: "An error occurred fetching the order." });
     });
 });
+
+router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
+  const order = new Order(req.body);
+  order.save()
+    .then((order: any) => {
+      res.send(order);
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500).send({ error: JSON.stringify(err) });
+    });
+}
+);
 
 export default router;

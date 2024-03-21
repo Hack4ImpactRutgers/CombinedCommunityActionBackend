@@ -1,13 +1,17 @@
 import mongoose from "mongoose";
-const { Schema, Types } = mongoose;
+const { Types } = mongoose;
+
+const foodItemSchema = new mongoose.Schema({
+  brand: { type: String, required: true },
+  weight: { type: Number, required: true }
+});
 
 const orderSchema = new mongoose.Schema(
   {
     client: { type: Types.ObjectId, ref: "Client", required: true },
-    assignedVolunteers: [{ type: Types.ObjectId, ref: "Volunteer" }],
     createdOn: { type: Date },
     deliverBy: { type: Date },
-    cost: { type: Number },
+    foodItems: [foodItemSchema],
     status: { type: String, enum: ["pending", "successful", "failed"], default: "pending" },
   });
 
