@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 import Order from "../schemas/order_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch an order by its ID
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
   Order.findById(req.params.id)
     .then((order: any) => {
       if (!order) {
