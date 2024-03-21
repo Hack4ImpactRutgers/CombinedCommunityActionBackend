@@ -22,4 +22,17 @@ router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
     });
 });
 
+router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
+  const order = new Order(req.body);
+  order.save()
+    .then((order: any) => {
+      res.send(order);
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.status(500).send({ error: JSON.stringify(err) });
+    });
+}
+);
+
 export default router;

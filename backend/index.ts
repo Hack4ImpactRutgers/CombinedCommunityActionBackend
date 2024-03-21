@@ -6,6 +6,7 @@ import adminRoute from "./routes/admin_route";
 import volunteerRoute from "./routes/volunteer_route";
 import clientRoute from "./routes/client_route";
 import authRoute from "./routes/auth_route";
+import orderRoute from "./routes/order_route";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/admin", adminRoute);
 app.use("/volunteer", volunteerRoute);
 app.use("/client", clientRoute);
 app.use("/auth", authRoute);
+app.use("/orders", orderRoute);
 
 connectDB();
 
