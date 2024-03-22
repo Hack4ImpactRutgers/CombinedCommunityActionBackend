@@ -16,7 +16,7 @@ describe("Admin Registration and Authentication Tests", () => {
   beforeAll(async () => {
     server = app.listen();
 
-    token = jwt.sign({ 
+    token = jwt.sign({
       email: "testemail",
       roles: ["admin", "volunteer"]
     }, process.env.TOKEN_SECRET as Secret);
@@ -38,8 +38,8 @@ describe("Admin Registration and Authentication Tests", () => {
     it("Register with admin privileges and not all fields set", async () => {
       const response = await request(server)
         .post("/auth/admin/register")
-        .set("x-auth-token", token)
-        .send({ 
+        .set("Cookie", "token=" + token)
+        .send({
           name: test_name,
           email: test_email
         });
@@ -51,8 +51,8 @@ describe("Admin Registration and Authentication Tests", () => {
     it("Register with admin privileges and all fields set", async () => {
       const response = await request(server)
         .post("/auth/admin/register")
-        .set("x-auth-token", token)
-        .send({ 
+        .set("Cookie", "token=" + token)
+        .send({
           name: test_name,
           email: test_email,
           password: test_password
@@ -65,8 +65,8 @@ describe("Admin Registration and Authentication Tests", () => {
     it("Attempt to register an existing admin ", async () => {
       const response = await request(server)
         .post("/auth/admin/register")
-        .set("x-auth-token", token)
-        .send({ 
+        .set("Cookie", "token=" + token)
+        .send({
           name: test_name,
           email: test_email,
           password: test_password
@@ -128,7 +128,7 @@ describe("Admin Registration and Authentication Tests", () => {
 
       const cookie = response.header["set-cookie"][0];
       let receivedToken: any;
-      
+
       cookie.split(";").forEach((cookiePart: string) => {
         if (cookiePart.includes("token")) {
           receivedToken = cookiePart.split("=")[1];

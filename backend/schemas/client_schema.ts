@@ -15,7 +15,8 @@ const clientSchema = new mongoose.Schema({
   age: Number,
   address: String,
   region: String,
-  pets: [petSchema]
+  pets: [petSchema], 
+  needsUpdate: { type: Boolean, default: false },
 });
 const Client = mongoose.model("Client", clientSchema);
 

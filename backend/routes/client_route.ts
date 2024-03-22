@@ -17,7 +17,7 @@ router.get("/all", (req: Request, res: Response) => {
 });
 
 // Route to fetch a client by its ID
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/:id", [auth, roles.admin], (req: Request, res: Response) => {
   Client.findById(req.params.id)
     .then((client: any) => {
       if (!client) {
@@ -30,7 +30,7 @@ router.get("/:id", (req: Request, res: Response) => {
     .catch((err: any) => {
       // Log the error and respond with a 500 status code
       console.error(err);
-      res.status(500).send({ error: "An error occurred fetching the client." });
+      res.status(500).send({ error: "An error o ccurred fetching the client." });
     });
 });
 
@@ -51,7 +51,7 @@ router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
 });
 
 
-router.patch("/:id", (req: Request, res: Response) => {
+router.patch("/:id", [auth, roles.admin], (req: Request, res: Response) => {
   /**
    * Route to update a client by its ID
    * Only admin users can update clients

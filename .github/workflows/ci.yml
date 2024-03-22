@@ -1,9 +1,5 @@
 name: ci
-on:
-  push:
-    branches:
-    - master
-    - auto_testing
+on: push
 
 env: 
   PORT: '8000'

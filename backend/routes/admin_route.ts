@@ -1,10 +1,13 @@
 import express, { Request, Response } from "express";
 import Admin from "../schemas/admin_schema";
+import auth from "../middleware/auth";
+import roles from "../middleware/roles";
+
 
 const router = express.Router();
 
 // Route to fetch an admin by its ID
-router.get("/:id", (req: Request, res: Response) => {
+router.get("/:id", [auth,roles.admin],(req: Request, res: Response) => {
   Admin.findById(req.params.id)
     .then((admin: any) => {
       if (!admin) {

@@ -265,6 +265,11 @@ router.post("/admin/forgot-password", async (req, res) => {
   const hash = bcrypt.hashSync(resetToken, saltRounds);
 
   // save the password change request in the database
+  const existingRequest = await PasswordChangeRequest.findOne({ email });
+  if (existingRequest) {
+    return res.status(200).json("If a user with this email exists, an email will be sent to them.");
+  }
+
   const passwordChangeRequest = new PasswordChangeRequest({
     email,
     token: hash
@@ -281,13 +286,13 @@ router.post("/admin/forgot-password", async (req, res) => {
     from: process.env.EMAIL,
     to: email,
     subject: "[CCA] Password Change Request",
-    html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.`
+    html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.
+          If this link does not work, copy and paste the following into your browser: ${emailLink}`
   });
   
   passwordChangeRequest.save().then(() => {
     res.status(200).json("If a user with this email exists, an email will be sent to them.");
-  })
-  .catch((err: any) => {
+  }).catch((err: any) => {
     console.error(err);
     res.status(500).json("An error occurred while processing your request");
   });
@@ -332,8 +337,7 @@ router.post("/admin/verify-forgot-password", async (req, res) => {
   user.password = bcrypt.hashSync(password, saltRounds);
   await user.save().then(() => {
     res.status(200).json("Password updated");
-  })
-  .catch((err: any) => {
+  }).catch((err: any) => {
     console.error(err);
     res.status(500).json("An error occurred while updating the password");
   });
