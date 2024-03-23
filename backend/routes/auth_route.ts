@@ -123,6 +123,10 @@ router.post("/volunteer/login", async (req, res) => {
   if (!validOTP) {
     return res.status(400).json("Invalid OTP");
   }
+  const volunteer = await Volunteer.findOne({ email: email });
+  if (!volunteer) {
+    return res.status(400).json("Invalid email, volunteer not found");
+  }
 
   // Create a JWT token and send it to the browser as a cookie
 
