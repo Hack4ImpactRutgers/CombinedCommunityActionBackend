@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
 import EmailToBeApproved from "../schemas/emails_schema";
 import Admin from "../schemas/admin_schema";
+import Volunteer from "../schemas/volunteer_schema";
 import bcrypt from "bcryptjs";
 import auth from "../middleware/auth";
 import roles from "../middleware/roles";
