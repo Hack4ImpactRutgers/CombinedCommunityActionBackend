@@ -37,7 +37,7 @@ describe("Client ID Routes", () => {
     admin = new Admin({
       email: ""});
     await admin.save();
-
+/*
     client1 = new Client({
       name: "client 1",
       age: 70,
@@ -78,6 +78,7 @@ describe("Client ID Routes", () => {
     });
 
     await client4.save();
+    */
 
   });
 
