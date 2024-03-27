@@ -20,4 +20,7 @@ describe("Client ID Routes", () => {
   beforeAll(async () => {
     server = app.listen();
     admin = new Admin({
-      email: "
+      email: ""});
+    await admin.save();
+  });
+});
