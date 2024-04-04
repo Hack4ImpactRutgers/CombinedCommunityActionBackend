@@ -19,7 +19,7 @@ const auth_1 = __importDefault(require("../middleware/auth"));
 const roles_1 = __importDefault(require("../middleware/roles"));
 const router = express_1.default.Router();
 // Route to fetch a volunteer by its ID
-router.get("/:id", (req, res) => {
+router.get("/:id", [auth_1.default, roles_1.default.admin], (req, res) => {
     volunteer_schema_1.default.findById(req.params.id)
         .then((volunteer) => {
         if (!volunteer) {

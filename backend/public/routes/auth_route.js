@@ -159,6 +159,20 @@ router.post("/admin/register", [auth_1.default, roles_1.default.admin], (req, re
     });
     newAdmin.save()
         .then(() => {
+        // send an email to the admin to notify them of their registration
+        transport.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "[CCA] Admin Account Successfully Registered",
+            html: `Hello ${name},<br><br>
+        An admin account has been successfully registered for you with this email address. You may have already been supplied with a temporary password from the admin that registered you.
+        However, it is highly recommended that you change your password as soon as possible. The link below will take you to the password change page.<br><br>
+        <a href="${process.env.FRONTEND_URL}/auth/admin/forgot-password">Change Password</a>
+        <br><br>
+        Thank you
+        <br>
+        `
+        });
         // Respond with a success message and a 201 status code
         res.status(201).json("Admin successfully registered");
     })
@@ -242,6 +256,10 @@ router.post("/admin/forgot-password", (req, res) => __awaiter(void 0, void 0, vo
     const resetToken = crypto_1.default.randomBytes(32).toString("hex");
     const hash = bcryptjs_1.default.hashSync(resetToken, saltRounds);
     // save the password change request in the database
+    const existingRequest = yield password_change_schema_1.default.findOne({ email });
+    if (existingRequest) {
+        return res.status(200).json("If a user with this email exists, an email will be sent to them.");
+    }
     const passwordChangeRequest = new password_change_schema_1.default({
         email,
         token: hash
@@ -256,12 +274,12 @@ router.post("/admin/forgot-password", (req, res) => __awaiter(void 0, void 0, vo
         from: process.env.EMAIL,
         to: email,
         subject: "[CCA] Password Change Request",
-        html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.`
+        html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.
+          If this link does not work, copy and paste the following into your browser: ${emailLink}`
     });
     passwordChangeRequest.save().then(() => {
         res.status(200).json("If a user with this email exists, an email will be sent to them.");
-    })
-        .catch((err) => {
+    }).catch((err) => {
         console.error(err);
         res.status(500).json("An error occurred while processing your request");
     });
@@ -300,8 +318,7 @@ router.post("/admin/verify-forgot-password", (req, res) => __awaiter(void 0, voi
     user.password = bcryptjs_1.default.hashSync(password, saltRounds);
     yield user.save().then(() => {
         res.status(200).json("Password updated");
-    })
-        .catch((err) => {
+    }).catch((err) => {
         console.error(err);
         res.status(500).json("An error occurred while updating the password");
     });

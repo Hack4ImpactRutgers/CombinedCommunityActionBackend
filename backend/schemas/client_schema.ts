@@ -8,14 +8,30 @@ const petSchema = new mongoose.Schema({
     kind: String,
     lbs: Number
   },
+
+  name: String,
+  age: Number,
+  description: String,
+  weight: String,
+  diet: String
+
 }, { _id: false });
 
 const clientSchema = new mongoose.Schema({
   name: { type: String, required: true },
   age: Number,
+  email: String,
+  phone: String,
+
   address: String,
+
+  street: String,
+  city: String,
+  state: String,
+  zipCode: String,
+
   region: String,
-  pets: [petSchema], 
+  pets: [petSchema],
   needsUpdate: { type: Boolean, default: false },
 });
 const Client = mongoose.model("Client", clientSchema);

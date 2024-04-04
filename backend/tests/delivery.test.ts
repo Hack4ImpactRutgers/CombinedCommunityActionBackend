@@ -18,6 +18,7 @@ jest.mock("../middleware/auth", () => {
 jest.mock("../middleware/roles", () => {
   return {
     volunteer: jest.fn((req, res, next) => next()),
+    admin: jest.fn((req, res, next) => next()),
   };
 });
 
@@ -46,13 +47,14 @@ describe("POST /", () => {
         zipCode: "12345",
         phone: "123-456-7890",
         instructions: "Leave at front door",
-        pets: [{ petName: "George", foodType: "Purina Gourmet Jumbo", foodAmount: 10}],
+        pets: [{ petName: "George", foodType: "Purina Gourmet Jumbo", foodAmount: 10 }],
         lasting: true,
         cup: "large",
         scale: "25 lbs",
         comments: "Cat is fat. Could use some exercise and a maybe a diet.",
         supplies: "Extra large cat bed",
         needs: "Vet visit for cat about potential weight loss.",
+        name: "volunteer name",
         updated: true,
         selectedDate: "2024-01-01",
         orderId: "order-id",
@@ -80,7 +82,7 @@ describe("POST /", () => {
         zipCode: "12345",
         phone: "123-456-7890",
         instructions: "Leave at front door",
-        pets: [{ petName: "George", foodType: "Purina Gourmet Jumbo", foodAmount: 10}],
+        pets: [{ petName: "George", foodType: "Purina Gourmet Jumbo", foodAmount: 10 }],
         lasting: true,
         cup: "large",
         scale: "25 lbs",

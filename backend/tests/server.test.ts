@@ -31,8 +31,8 @@ describe("Express + TypeScript Server Tests", () => {
   beforeAll(async () => {
     server = app.listen();
 
-    const savedAdmin = await new Admin({ 
-      name: "Test Admin", 
+    const savedAdmin = await new Admin({
+      name: "Test Admin",
       email: "test@admin.com",
       password: "testpassword",
     }).save();
@@ -114,6 +114,16 @@ describe("Express + TypeScript Server Tests", () => {
       const response = await request(server).post("/client").send(newClientData);
       expect(response.status).toBe(201);
       expect(response.body.name).toEqual(newClientData.name);
+    });
+
+    it("UPDATE CLIENT BY ID", async () => {
+      const response = await request(server).patch(`/client/${clientId}`).send({ name: "Jane Client Updated" });
+      expect(response.status).toBe(200);
+      expect(response.body.name).toEqual("Jane Client Updated");
+
+      // update client by a field that does not exist and expect no change in the client
+      const response2 = await request(server).patch(`/client/${clientId}`).send({ invalidField: "Invalid Field" });
+      expect(response2.body.invalidField).toBeUndefined();
     });
   });
 
