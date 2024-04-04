@@ -21,7 +21,7 @@ const roles_1 = __importDefault(require("../middleware/roles"));
 const router = express_1.default.Router();
 router.post("/", [auth_1.default, roles_1.default.volunteer], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { firstName, lastName, address, city, zipCode, phone, instructions, pets, lasting, cup, scale, comments, supplies, needs, updated, selectedDate, orderId, // This must be provided in the body to link the report to the order
+        const { firstName, lastName, address, city, zipCode, phone, instructions, pets, lasting, cup, scale, comments, supplies, needs, name, updated, selectedDate, orderId, // This must be provided in the body to link the report to the order
         volunteerId // This must be provided in the body to link the report to the volunteer
          } = req.body;
         // Create and save the delivery report
@@ -40,6 +40,7 @@ router.post("/", [auth_1.default, roles_1.default.volunteer], (req, res) => __aw
             comments,
             supplies,
             needs,
+            name,
             updated,
             selectedDate,
             order: orderId,
@@ -61,6 +62,16 @@ router.post("/", [auth_1.default, roles_1.default.volunteer], (req, res) => __aw
     catch (err) {
         console.error(err);
         res.status(500).send({ error: "An error occurred while submitting the delivery report." });
+    }
+}));
+router.get("/", [auth_1.default, roles_1.default.admin], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const deliveryReports = yield delivery_report_schema_1.default.find();
+        res.send(deliveryReports);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send({ error: "An error occurred fetching the delivery reports." });
     }
 }));
 exports.default = router;

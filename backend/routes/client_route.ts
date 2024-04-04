@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import Client from "../schemas/client_schema";
 import auth from "../middleware/auth";
 import roles from "../middleware/roles";
-import mongoose from "mongoose";
 const router = express.Router();
 
 router.get("/all", (req: Request, res: Response) => {
@@ -51,7 +50,7 @@ router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
 });
 
 
-router.patch("/:id", [auth, roles.admin], (req: Request, res: Response) => {
+router.patch("/:id", [auth, roles.admin], async (req: Request, res: Response) => {
   /**
    * Route to update a client by its ID
    * Only admin users can update clients
@@ -60,48 +59,20 @@ router.patch("/:id", [auth, roles.admin], (req: Request, res: Response) => {
    */
 
   const { id } = req.params;
-  const { name, age, address, region, pets } = req.body;
+  console.log("PATCH /client/", id);
 
-  const oldClient = Client.findById(id);
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send({ error: "Invalid client ID." });
-  }
-  if (!oldClient) {
-    return res.status(404).send({ error: "Client not found." });
-  }
-  if (!name && !age && !address && !region && !pets) {
-    return res.status(400).send({ error: "No client data provided." });
-  }
 
-  const newValues: { name?: string, age?: number, address?: string, region?: string, pets?: any[], [key: string]: any } = {};
-  if (name) newValues["name"] = name;
-  if (age) newValues["age"] = age;
-  if (address) newValues["address"] = address;
-  if (region) newValues["region"] = region;
-  if (pets) newValues["pets"] = pets;
-
-  // find values of newClient that are undefined and fill it with the oldClient values
-  for (const key in oldClient) {
-    if (newValues[key] == undefined) {
-      newValues[key] = oldClient.get(key);
-    }
-  }
-
-  const updatedClient = new Client(newValues);
-  updatedClient.validateSync();
-  if (updatedClient.errors) {
-    return res.status(400).send({ error: updatedClient.errors });
-  }
-
-  Client.findByIdAndUpdate(id, newValues).then((client: any) => {
-    if (!client) {
+  try {
+    const result = await Client.findOneAndUpdate({ _id: id }, req.body, { new: true });
+    if (!result) {
       return res.status(404).send({ error: "Client not found." });
     }
-    res.send(client);
+    res.send(result);
   }
-  ).catch((err: any) => {
-    res.status(500).send({ error: err });
-  });
+  catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "An error occurred updating the client." });
+  }
 });
 
 export default router;

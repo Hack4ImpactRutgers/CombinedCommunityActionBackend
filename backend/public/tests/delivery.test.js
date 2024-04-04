@@ -29,6 +29,7 @@ jest.mock("../middleware/auth", () => {
 jest.mock("../middleware/roles", () => {
     return {
         volunteer: jest.fn((req, res, next) => next()),
+        admin: jest.fn((req, res, next) => next()),
     };
 });
 // mock the mongoose models
@@ -60,6 +61,7 @@ describe("POST /", () => {
             comments: "Cat is fat. Could use some exercise and a maybe a diet.",
             supplies: "Extra large cat bed",
             needs: "Vet visit for cat about potential weight loss.",
+            name: "volunteer name",
             updated: true,
             selectedDate: "2024-01-01",
             orderId: "order-id",

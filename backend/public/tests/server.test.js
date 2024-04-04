@@ -111,6 +111,14 @@ describe("Express + TypeScript Server Tests", () => {
             expect(response.status).toBe(201);
             expect(response.body.name).toEqual(newClientData.name);
         }));
+        it("UPDATE CLIENT BY ID", () => __awaiter(void 0, void 0, void 0, function* () {
+            const response = yield (0, supertest_1.default)(server).patch(`/client/${clientId}`).send({ name: "Jane Client Updated" });
+            expect(response.status).toBe(200);
+            expect(response.body.name).toEqual("Jane Client Updated");
+            // update client by a field that does not exist and expect no change in the client
+            const response2 = yield (0, supertest_1.default)(server).patch(`/client/${clientId}`).send({ invalidField: "Invalid Field" });
+            expect(response2.body.invalidField).toBeUndefined();
+        }));
     });
     // VOLUNTEER ROUTE TESTS
     describe("Volunteer Route Tests", () => {
