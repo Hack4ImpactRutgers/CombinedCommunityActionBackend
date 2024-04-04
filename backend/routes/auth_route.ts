@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
-import EmailToBeApproved from "../schemas/emails_schema";
+import pendingVolunteer from "../schemas/pending_volunteer_schema";
 import Admin from "../schemas/admin_schema";
 import bcrypt from "bcryptjs";
 import auth from "../middleware/auth";
@@ -39,13 +39,13 @@ router.post("/volunteer/signup", async (req, res) => {
 
   try {
     // Check if the email already exists in the emailsToBeApproved collection
-    const existingEmail = await EmailToBeApproved.findOne({ email });
+    const existingEmail = await pendingVolunteer.findOne({ email });
     if (existingEmail) {
       return res.status(400).json("Email already exists");
     }
 
     // Save the email in the emailsToBeApproved collection
-    const newEmail = new EmailToBeApproved({ email });
+    const newEmail = new pendingVolunteer({ email });
     await newEmail.save();
     res.json("Signup request sent");
   } catch (error) {
