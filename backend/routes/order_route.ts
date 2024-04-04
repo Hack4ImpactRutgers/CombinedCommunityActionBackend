@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-router.get("/all", async (req: Request, res: Response) => {
+router.get("/all", [auth, roles.admin], async (req: Request, res: Response) => {
   console.log("/orders/all");
   try {
     const orders = await Order.find({});
