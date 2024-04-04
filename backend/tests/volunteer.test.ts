@@ -29,23 +29,27 @@ describe("Authentication and Signup Route Tests", () => {
   beforeAll(async () => {
     server = app.listen();
 
+    // Clear the pendingVolunteer collection before running tests
+    await OTP.deleteMany({});
+    await pendingVolunteer.deleteMany({});
+
     // Generate an OTP for testing the login route
-    const savedOTP = new OTP({ 
-      email:"test@example.com", 
-      otp:"54321", 
-      expiresAt: new Date(Date.now() + 5 * 60000) 
+    const savedOTP = new OTP({
+      email: "test@example.com",
+      otp: "54321",
+      expiresAt: new Date(Date.now() + 5 * 60000)
     }).save();
     testOTP = (await savedOTP).otp;
 
-    // Clear the pendingVolunteer collection before running tests
-    await pendingVolunteer.deleteMany({});
+
   });
 
   // After all tests are done, close the server and disconnect from the database
-  afterAll((done) => {
+  afterAll(async () => {
+    await OTP.deleteMany({});
+    await pendingVolunteer.deleteMany({});
     server.close(() => {
       mongoose.disconnect().then(() => {
-        done();
       });
     });
   });

@@ -16,7 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../index"); // Adjust the import path as needed
 const otp_schema_1 = __importDefault(require("../schemas/otp_schema"));
-const emails_schema_1 = __importDefault(require("../schemas/emails_schema"));
+const pending_volunteer_schema_1 = __importDefault(require("../schemas/pending_volunteer_schema"));
 // Mock the auth middleware
 jest.mock("../middleware/auth", () => {
     return jest.fn((req, res, next) => next());
@@ -36,6 +36,9 @@ describe("Authentication and Signup Route Tests", () => {
     // Before running any tests, set up the server and clear the emailsToBeApproved collection
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
         server = index_1.app.listen();
+        // Clear the pendingVolunteer collection before running tests
+        yield otp_schema_1.default.deleteMany({});
+        yield pending_volunteer_schema_1.default.deleteMany({});
         // Generate an OTP for testing the login route
         const savedOTP = new otp_schema_1.default({
             email: "test@example.com",
@@ -43,17 +46,16 @@ describe("Authentication and Signup Route Tests", () => {
             expiresAt: new Date(Date.now() + 5 * 60000)
         }).save();
         testOTP = (yield savedOTP).otp;
-        // Clear the emailsToBeApproved collection before running tests
-        yield emails_schema_1.default.deleteMany({});
     }));
     // After all tests are done, close the server and disconnect from the database
-    afterAll((done) => {
+    afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
+        yield otp_schema_1.default.deleteMany({});
+        yield pending_volunteer_schema_1.default.deleteMany({});
         server.close(() => {
             mongoose_1.default.disconnect().then(() => {
-                done();
             });
         });
-    });
+    }));
     // Test suite for the Signup Route (POST /volunteer/signup)
     describe("POST /volunteer/signup", () => {
         it("should request signup and return success message", () => __awaiter(void 0, void 0, void 0, function* () {
