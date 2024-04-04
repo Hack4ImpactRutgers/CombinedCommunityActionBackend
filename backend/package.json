@@ -9,7 +9,7 @@
     "start": "node public/index.js",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add public",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q public/index.js\"",
     "test": "jest --detectOpenHandles"
   },
   "pre-commit": [

@@ -20,7 +20,7 @@ router.get("/all", (req, res) => {
     });
 });
 // Route to fetch a client by its ID
-router.get("/:id", (req, res) => {
+router.get("/:id", [auth_1.default, roles_1.default.admin], (req, res) => {
     client_schema_1.default.findById(req.params.id)
         .then((client) => {
         if (!client) {
@@ -33,7 +33,7 @@ router.get("/:id", (req, res) => {
         .catch((err) => {
         // Log the error and respond with a 500 status code
         console.error(err);
-        res.status(500).send({ error: "An error occurred fetching the client." });
+        res.status(500).send({ error: "An error o ccurred fetching the client." });
     });
 });
 // Route to create and save a new client
@@ -51,7 +51,7 @@ router.post("/", [auth_1.default, roles_1.default.admin], (req, res) => {
         res.status(400).send({ error: err.message });
     });
 });
-router.patch("/:id", (req, res) => {
+router.patch("/:id", [auth_1.default, roles_1.default.admin], (req, res) => {
     /**
      * Route to update a client by its ID
      * Only admin users can update clients

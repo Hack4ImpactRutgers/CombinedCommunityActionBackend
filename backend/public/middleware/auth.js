@@ -8,7 +8,8 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET;
 // verifies token in request header. use as callback in conjunction with roles.js for protected routes
 const auth = (req, res, next) => {
     // check for token header
-    const token = req.header("x-auth-token");
+    // const token = req.header("x-auth-token");
+    const { token } = req.cookies;
     if (!token)
         return res.status(401).json("No token, authorization denied");
     try {

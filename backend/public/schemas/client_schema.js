@@ -13,14 +13,26 @@ const petSchema = new mongoose_1.default.Schema({
         kind: String,
         lbs: Number
     },
+    name: String,
+    age: Number,
+    description: String,
+    weight: String,
+    diet: String
 }, { _id: false });
 exports.petSchema = petSchema;
 const clientSchema = new mongoose_1.default.Schema({
     name: { type: String, required: true },
     age: Number,
+    email: String,
+    phone: String,
     address: String,
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String,
     region: String,
-    pets: [petSchema]
+    pets: [petSchema],
+    needsUpdate: { type: Boolean, default: false },
 });
 const Client = mongoose_1.default.model("Client", clientSchema);
 exports.Client = Client;

@@ -6,7 +6,7 @@ import roles from "../middleware/roles";
 const router = express.Router();
 
 // Route to fetch a volunteer by its ID
-router.get("/:id", [auth, roles.admin] , (req: Request, res: Response) => {
+router.get("/:id", [auth, roles.admin], (req: Request, res: Response) => {
   Volunteer.findById(req.params.id)
     .then((volunteer: any) => {
       if (!volunteer) {
@@ -27,7 +27,7 @@ router.get("/:id", [auth, roles.admin] , (req: Request, res: Response) => {
 //If the tests fail, please modify the tests to reflect the changes made here.
 
 // Route to create and save a new volunteer into pendingVolunteer collection
-router.post("/",  (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   const newVolunteer = new PendingVolunteer(req.body);
   newVolunteer
     .save()
@@ -45,22 +45,22 @@ router.post("/",  (req: Request, res: Response) => {
 
 
 //Route to move a volunteer from Pending Volunteer to Volunteer
-router.post("/verify/:id", [auth, roles.admin] , async (req: Request, res: Response)=>{
-  try{
-    const pendingVolunteer = await(PendingVolunteer.findById(req.params.id));
+router.post("/verify/:id", [auth, roles.admin], async (req: Request, res: Response) => {
+  try {
+    const pendingVolunteer = await (PendingVolunteer.findById(req.params.id));
 
-    if(!pendingVolunteer){
-      return res.status(404).send({error: "Invalid verification request."});
+    if (!pendingVolunteer) {
+      return res.status(404).send({ error: "Invalid verification request." });
     }
 
     const newVolunteer = new Volunteer(pendingVolunteer.toObject());
     await newVolunteer.save();
-    await PendingVolunteer.deleteOne({ _id: req.params.id});
+    await PendingVolunteer.deleteOne({ _id: req.params.id });
 
     res.status(200).send(newVolunteer);
-  } catch (err){
+  } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "An error occured while verifying."});
+    res.status(500).send({ error: "An error occured while verifying." });
   }
 });
 

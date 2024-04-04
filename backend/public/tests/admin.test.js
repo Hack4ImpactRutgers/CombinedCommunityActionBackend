@@ -46,7 +46,7 @@ describe("Admin Registration and Authentication Tests", () => {
         it("Register with admin privileges and not all fields set", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/auth/admin/register")
-                .set("x-auth-token", token)
+                .set("Cookie", "token=" + token)
                 .send({
                 name: test_name,
                 email: test_email
@@ -57,7 +57,7 @@ describe("Admin Registration and Authentication Tests", () => {
         it("Register with admin privileges and all fields set", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/auth/admin/register")
-                .set("x-auth-token", token)
+                .set("Cookie", "token=" + token)
                 .send({
                 name: test_name,
                 email: test_email,
@@ -69,7 +69,7 @@ describe("Admin Registration and Authentication Tests", () => {
         it("Attempt to register an existing admin ", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/auth/admin/register")
-                .set("x-auth-token", token)
+                .set("Cookie", "token=" + token)
                 .send({
                 name: test_name,
                 email: test_email,

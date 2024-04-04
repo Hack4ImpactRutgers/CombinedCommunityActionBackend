@@ -4,6 +4,20 @@ import auth from "../middleware/auth";
 import roles from "../middleware/roles";
 const router = express.Router();
 
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+router.get("/all", async (req: Request, res: Response) => {
+  console.log("/orders/all");
+  try {
+    const orders = await Order.find({});
+    res.send(orders);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).send({ error: JSON.stringify(err) });
+  }
+});
+
 // Route to fetch an order by its ID
 router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
   Order.findById(req.params.id)

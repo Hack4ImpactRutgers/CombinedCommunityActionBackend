@@ -60,7 +60,7 @@ describe("Middleware functions tests", () => {
         it("Admins should access protected route", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/protected")
-                .set("x-auth-token", adminToken);
+                .set("Cookie", `token=${adminToken}`);
             expect(response.status).toBe(200);
             expect(response.body).toBe("success");
         }));
@@ -70,7 +70,7 @@ describe("Middleware functions tests", () => {
         it("Volunteers should not be able to access the protected route", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/protected")
-                .set("x-auth-token", volunteerToken);
+                .set("Cookie", `token=${volunteerToken}`);
             expect(response.status).toBe(403);
             expect(response.body).toBe("Unauthorized");
         }));
@@ -80,7 +80,7 @@ describe("Middleware functions tests", () => {
         it("Invalid tokens should not be able to access the protected route", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)
                 .post("/protected")
-                .set("x-auth-token", invalidToken);
+                .set("Cookie", `token=${invalidToken}`);
             expect(response.status).toBe(400);
             expect(response.body).toBe("Token is not valid");
         }));
