@@ -27,7 +27,7 @@ router.get("/:id", [auth, roles.admin] , (req: Request, res: Response) => {
 //If the tests fail, please modify the tests to reflect the changes made here.
 
 // Route to create and save a new volunteer into pendingVolunteer collection
-router.post("/",  (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   const newVolunteer = new PendingVolunteer(req.body);
   newVolunteer
     .save()

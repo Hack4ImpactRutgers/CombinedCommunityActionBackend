@@ -24,6 +24,7 @@ router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) =>
       comments,
       supplies,
       needs,
+      name,
       updated,
       selectedDate,
       orderId, // This must be provided in the body to link the report to the order
@@ -46,6 +47,7 @@ router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) =>
       comments,
       supplies,
       needs,
+      name,
       updated,
       selectedDate,
       order: orderId,
@@ -70,6 +72,17 @@ router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) =>
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "An error occurred while submitting the delivery report." });
+  }
+});
+
+
+router.get("/", [auth, roles.admin], async (req: Request, res: Response) => {
+  try {
+    const deliveryReports = await DeliveryReport.find();
+    res.send(deliveryReports);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "An error occurred fetching the delivery reports." });
   }
 });
 
