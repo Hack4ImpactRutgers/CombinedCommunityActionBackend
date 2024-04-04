@@ -169,6 +169,21 @@ router.post("/admin/register", [auth, roles.admin], async (req: Request, res: Re
 
   newAdmin.save()
     .then(() => {
+      // send an email to the admin to notify them of their registration
+      transport.sendMail({
+        from: process.env.EMAIL,
+        to: email,
+        subject: "[CCA] Admin Account Successfully Registered",
+        html: `Hello ${name},<br><br>
+        An admin account has been successfully registered for you with this email address. You may have already been supplied with a temporary password from the admin that registered you.
+        However, it is highly recommended that you change your password as soon as possible. The link below will take you to the password change page.<br><br>
+        <a href="${process.env.FRONTEND_URL}/auth/admin/forgot-password">Change Password</a>
+        <br><br>
+        Thank you
+        <br>
+        `
+      });
+
       // Respond with a success message and a 201 status code
       res.status(201).json("Admin successfully registered");
     })
