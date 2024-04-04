@@ -3,8 +3,8 @@ import request from "supertest";
 import { app } from "../index"; // Adjust the import path as needed
 import { Server } from "http";
 import OTP from "../schemas/otp_schema";
-import EmailToBeApproved from "../schemas/emails_schema";
 import { Request, Response, NextFunction } from "express";
+import pendingVolunteer from "../schemas/pending_volunteer_schema";
 
 // Mock the auth middleware
 jest.mock("../middleware/auth", () => {
@@ -37,8 +37,8 @@ describe("Authentication and Signup Route Tests", () => {
     }).save();
     testOTP = (await savedOTP).otp;
 
-    // Clear the emailsToBeApproved collection before running tests
-    await EmailToBeApproved.deleteMany({});
+    // Clear the pendingVolunteer collection before running tests
+    await pendingVolunteer.deleteMany({});
   });
 
   // After all tests are done, close the server and disconnect from the database
