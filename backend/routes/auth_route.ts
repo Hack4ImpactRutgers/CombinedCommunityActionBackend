@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import OTP from "../schemas/otp_schema";
-import EmailToBeApproved from "../schemas/emails_schema";
+import pendingVolunteer from "../schemas/pending_volunteer_schema";
 import Admin from "../schemas/admin_schema";
 import bcrypt from "bcryptjs";
 import auth from "../middleware/auth";
@@ -39,17 +39,19 @@ router.post("/volunteer/signup", async (req, res) => {
 
   try {
     // Check if the email already exists in the emailsToBeApproved collection
-    const existingEmail = await EmailToBeApproved.findOne({ email });
+    const existingEmail = await pendingVolunteer.findOne({ email });
     if (existingEmail) {
+      console.log(existingEmail);
       return res.status(400).json("Email already exists");
     }
 
     // Save the email in the emailsToBeApproved collection
-    const newEmail = new EmailToBeApproved({ email });
+    const newEmail = new pendingVolunteer({ email });
     await newEmail.save();
     res.json("Signup request sent");
   } catch (error) {
     // Handle any unexpected errors
+    console.log(error);
     res.status(500).json("An error occurred while processing your request");
   }
 });
@@ -150,17 +152,17 @@ router.post("/admin/register", [auth, roles.admin], async (req: Request, res: Re
   const { name, email, password } = req.body;
 
   // validate request
-  if(!name || !email || !password) {
+  if (!name || !email || !password) {
     return res.status(400).json("Please enter all fields");
   }
 
   const admin = await Admin.findOne({ email: email });
-  if(admin) {
+  if (admin) {
     return res.status(400).json("Admin already exists");
   }
 
   const hash = bcrypt.hashSync(password, saltRounds);
-  
+
   const newAdmin = new Admin({
     name: name,
     email: email,
@@ -203,16 +205,16 @@ router.post("/admin/register", [auth, roles.admin], async (req: Request, res: Re
  */
 router.post("/admin/login", async (req, res) => {
   const { email, password } = req.body;
-  
+
   // search for admin
   const admin = await Admin.findOne({ email: email });
-  if(!admin) {
+  if (!admin) {
     return res.status(400).json("Invalid email or password");
   }
 
   // check provided password
   const same = await bcrypt.compare(password, admin.password);
-  if(!same) {
+  if (!same) {
     return res.status(400).json("Invalid email or password");
   }
 
@@ -304,7 +306,7 @@ router.post("/admin/forgot-password", async (req, res) => {
     html: `Click <a href="${emailLink}">here</a> to change your password. This link expires in 24 hours.
           If this link does not work, copy and paste the following into your browser: ${emailLink}`
   });
-  
+
   passwordChangeRequest.save().then(() => {
     res.status(200).json("If a user with this email exists, an email will be sent to them.");
   }).catch((err: any) => {
@@ -344,7 +346,7 @@ router.post("/admin/verify-forgot-password", async (req, res) => {
 
   // update the user's password
   const user = await Admin.findOne({ email: request.email });
-  if(!user) {
+  if (!user) {
     return res.status(400).json("User not found");
   }
   await request.deleteOne();

@@ -16,7 +16,7 @@ const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const otp_schema_1 = __importDefault(require("../schemas/otp_schema"));
-const emails_schema_1 = __importDefault(require("../schemas/emails_schema"));
+const pending_volunteer_schema_1 = __importDefault(require("../schemas/pending_volunteer_schema"));
 const admin_schema_1 = __importDefault(require("../schemas/admin_schema"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const auth_1 = __importDefault(require("../middleware/auth"));
@@ -47,17 +47,19 @@ router.post("/volunteer/signup", (req, res) => __awaiter(void 0, void 0, void 0,
     const { email } = req.body;
     try {
         // Check if the email already exists in the emailsToBeApproved collection
-        const existingEmail = yield emails_schema_1.default.findOne({ email });
+        const existingEmail = yield pending_volunteer_schema_1.default.findOne({ email });
         if (existingEmail) {
+            console.log(existingEmail);
             return res.status(400).json("Email already exists");
         }
         // Save the email in the emailsToBeApproved collection
-        const newEmail = new emails_schema_1.default({ email });
+        const newEmail = new pending_volunteer_schema_1.default({ email });
         yield newEmail.save();
         res.json("Signup request sent");
     }
     catch (error) {
         // Handle any unexpected errors
+        console.log(error);
         res.status(500).json("An error occurred while processing your request");
     }
 }));

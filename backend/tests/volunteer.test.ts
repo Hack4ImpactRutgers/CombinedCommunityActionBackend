@@ -3,8 +3,8 @@ import request from "supertest";
 import { app } from "../index"; // Adjust the import path as needed
 import { Server } from "http";
 import OTP from "../schemas/otp_schema";
-import EmailToBeApproved from "../schemas/emails_schema";
 import { Request, Response, NextFunction } from "express";
+import pendingVolunteer from "../schemas/pending_volunteer_schema";
 
 // Mock the auth middleware
 jest.mock("../middleware/auth", () => {
@@ -29,23 +29,27 @@ describe("Authentication and Signup Route Tests", () => {
   beforeAll(async () => {
     server = app.listen();
 
+    // Clear the pendingVolunteer collection before running tests
+    await OTP.deleteMany({});
+    await pendingVolunteer.deleteMany({});
+
     // Generate an OTP for testing the login route
-    const savedOTP = new OTP({ 
-      email:"test@example.com", 
-      otp:"54321", 
-      expiresAt: new Date(Date.now() + 5 * 60000) 
+    const savedOTP = new OTP({
+      email: "test@example.com",
+      otp: "54321",
+      expiresAt: new Date(Date.now() + 5 * 60000)
     }).save();
     testOTP = (await savedOTP).otp;
 
-    // Clear the emailsToBeApproved collection before running tests
-    await EmailToBeApproved.deleteMany({});
+
   });
 
   // After all tests are done, close the server and disconnect from the database
-  afterAll((done) => {
+  afterAll(async () => {
+    await OTP.deleteMany({});
+    await pendingVolunteer.deleteMany({});
     server.close(() => {
       mongoose.disconnect().then(() => {
-        done();
       });
     });
   });
