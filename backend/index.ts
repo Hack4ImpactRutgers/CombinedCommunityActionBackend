@@ -22,7 +22,9 @@ const DEV = process.env.NODE_ENV === "DEV";
 // Add this middleware to parse JSON request bodies
 app.use(express.json());
 app.use(cors({
-  credentials: true
+  credentials: true,
+  // allow multiple origins
+  origin: ["http://localhost:3000", "https://cca-frontend-m58844dd4-hack4impactrutgers.vercel.app/"],
 }));
 app.use(cookieParser());
 
