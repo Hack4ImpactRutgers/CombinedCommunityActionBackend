@@ -24,7 +24,9 @@ const DEV = process.env.NODE_ENV === "DEV";
 // Add this middleware to parse JSON request bodies
 exports.app.use(express_1.default.json());
 exports.app.use((0, cors_1.default)({
-    credentials: true
+    credentials: true,
+    // allow multiple origins
+    origin: ["http://localhost:3000", "https://cca-frontend-m58844dd4-hack4impactrutgers.vercel.app/"],
 }));
 exports.app.use((0, cookie_parser_1.default)());
 exports.app.use("/admin", admin_route_1.default);
