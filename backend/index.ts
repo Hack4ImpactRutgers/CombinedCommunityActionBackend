@@ -21,7 +21,9 @@ const DEV = process.env.NODE_ENV === "DEV";
 
 // Add this middleware to parse JSON request bodies
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  credentials: true
+}));
 app.use(cookieParser());
 
 app.use("/admin", adminRoute);
