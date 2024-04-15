@@ -29,7 +29,7 @@ const deliveryReportSchema = new mongoose_1.default.Schema({
     selectedDate: { type: Date, required: true },
     // Add the order and volunteer reference fields
     order: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Order", required: true },
-    volunteer: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Volunteer", required: true },
+    volunteer: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Volunteer", required: false },
 });
 const DeliveryReport = mongoose_1.default.model("DeliveryReport", deliveryReportSchema);
 exports.default = DeliveryReport;

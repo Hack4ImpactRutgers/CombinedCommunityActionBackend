@@ -22,10 +22,9 @@ const router = express_1.default.Router();
 router.post("/", [auth_1.default, roles_1.default.volunteer], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { firstName, lastName, address, city, zipCode, phone, instructions, pets, lasting, cup, scale, comments, supplies, needs, name, updated, selectedDate, orderId, // This must be provided in the body to link the report to the order
-        volunteerId // This must be provided in the body to link the report to the volunteer
-         } = req.body;
+        volunteerId } = req.body;
         // Create and save the delivery report
-        const deliveryReport = new delivery_report_schema_1.default({
+        const deliveryReportData = {
             firstName,
             lastName,
             address,
@@ -44,8 +43,11 @@ router.post("/", [auth_1.default, roles_1.default.volunteer], (req, res) => __aw
             updated,
             selectedDate,
             order: orderId,
-            volunteer: volunteerId
-        });
+        };
+        if (volunteerId) {
+            deliveryReportData["volunteer"] = volunteerId;
+        }
+        const deliveryReport = new delivery_report_schema_1.default(deliveryReportData);
         yield deliveryReport.save();
         // Update the order status to "successful"
         const orderStatus = "successful";
