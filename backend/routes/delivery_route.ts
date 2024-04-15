@@ -28,11 +28,12 @@ router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) =>
       updated,
       selectedDate,
       orderId, // This must be provided in the body to link the report to the order
-      volunteerId // This must be provided in the body to link the report to the volunteer
+      volunteerId
     } = req.body;
 
     // Create and save the delivery report
-    const deliveryReport = new DeliveryReport({
+
+    const deliveryReportData: any = {
       firstName,
       lastName,
       address,
@@ -51,8 +52,13 @@ router.post("/", [auth, roles.volunteer], async (req: Request, res: Response) =>
       updated,
       selectedDate,
       order: orderId,
-      volunteer: volunteerId
-    });
+    };
+
+    if (volunteerId) {
+      deliveryReportData["volunteer"] = volunteerId;
+    }
+
+    const deliveryReport = new DeliveryReport(deliveryReportData);
 
     await deliveryReport.save();
 

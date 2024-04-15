@@ -14,18 +14,18 @@ const deliveryReportSchema = new mongoose.Schema({
     foodType: String,
     foodAmount: Number
   }],
-  lasting: { type: Boolean, required: true},
+  lasting: { type: Boolean, required: true },
   cup: Boolean,
   scale: Boolean,
   comments: String,
   supplies: { type: String, required: true },
-  needs: { type: String, required: true},
-  name: { type: String, required: true}, // volunteer name 
+  needs: { type: String, required: true },
+  name: { type: String, required: true }, // volunteer name 
   updated: { type: Boolean, required: true },
   selectedDate: { type: Date, required: true },
   // Add the order and volunteer reference fields
   order: { type: mongoose.Schema.Types.ObjectId, ref: "Order", required: true },
-  volunteer: { type: mongoose.Schema.Types.ObjectId, ref: "Volunteer", required: true },
+  volunteer: { type: mongoose.Schema.Types.ObjectId, ref: "Volunteer", required: false },
 });
 
 const DeliveryReport = mongoose.model("DeliveryReport", deliveryReportSchema);
