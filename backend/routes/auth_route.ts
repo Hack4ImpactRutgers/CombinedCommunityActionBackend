@@ -225,7 +225,7 @@ router.post("/admin/login", async (req, res) => {
     roles: ["admin"],
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" });
 
-  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true, sameSite: "none" });
   res.status(200).json("Password verified, admin logged in");
 });
 

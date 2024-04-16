@@ -208,7 +208,7 @@ router.post("/admin/login", (req, res) => __awaiter(void 0, void 0, void 0, func
         email: admin.email,
         roles: ["admin"],
     }, TOKEN_SECRET, { expiresIn: "1h" });
-    res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+    res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true, sameSite: "none" });
     res.status(200).json("Password verified, admin logged in");
 }));
 /**
