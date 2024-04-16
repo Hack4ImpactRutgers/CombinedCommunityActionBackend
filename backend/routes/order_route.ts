@@ -21,7 +21,7 @@ router.get("/all", [auth, roles.volunteer], async (req: Request, res: Response) 
 
 // Route to fetch an order by its ID
 router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
-  Order.findById(req.params.id)
+  Order.findById(new mongoose.Types.ObjectId(req.params.id))
     .then((order: any) => {
       if (!order) {
         // If client is not found, respond with a 404 status code

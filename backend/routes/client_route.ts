@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import Client from "../schemas/client_schema";
 import auth from "../middleware/auth";
 import roles from "../middleware/roles";
+import mongoose from "mongoose";
+
 const router = express.Router();
 
 router.get("/all", (req: Request, res: Response) => {
@@ -17,7 +19,7 @@ router.get("/all", (req: Request, res: Response) => {
 
 // Route to fetch a client by its ID
 router.get("/:id", [auth, roles.admin], (req: Request, res: Response) => {
-  Client.findById(req.params.id)
+  Client.findById(new mongoose.Types.ObjectId(req.params.id))
     .then((client: any) => {
       if (!client) {
         // If client is not found, respond with a 404 status code

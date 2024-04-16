@@ -32,7 +32,7 @@ router.get("/all", [auth_1.default, roles_1.default.volunteer], (req, res) => __
 }));
 // Route to fetch an order by its ID
 router.get("/:id", [auth_1.default, roles_1.default.volunteer], (req, res) => {
-    order_schema_1.default.findById(req.params.id)
+    order_schema_1.default.findById(new mongoose_1.default.Types.ObjectId(req.params.id))
         .then((order) => {
         if (!order) {
             // If client is not found, respond with a 404 status code

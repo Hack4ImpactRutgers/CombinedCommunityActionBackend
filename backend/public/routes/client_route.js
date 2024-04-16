@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const client_schema_1 = __importDefault(require("../schemas/client_schema"));
 const auth_1 = __importDefault(require("../middleware/auth"));
 const roles_1 = __importDefault(require("../middleware/roles"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const router = express_1.default.Router();
 router.get("/all", (req, res) => {
     client_schema_1.default.find()
@@ -29,7 +30,7 @@ router.get("/all", (req, res) => {
 });
 // Route to fetch a client by its ID
 router.get("/:id", [auth_1.default, roles_1.default.admin], (req, res) => {
-    client_schema_1.default.findById(req.params.id)
+    client_schema_1.default.findById(new mongoose_1.default.Types.ObjectId(req.params.id))
         .then((client) => {
         if (!client) {
             // If client is not found, respond with a 404 status code
