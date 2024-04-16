@@ -89,7 +89,7 @@ describe("Admin Registration and Authentication Tests", () => {
                 password: test_password
             });
             expect(response.status).toBe(200);
-            expect(response.body).toBe("Password verified, admin logged in");
+            expect(response.body.msg).toBe("Password verified, admin logged in");
         }));
         it("Login with incorrect credentials", () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield (0, supertest_1.default)(server)

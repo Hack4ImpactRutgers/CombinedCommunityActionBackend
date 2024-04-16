@@ -88,7 +88,7 @@ describe("Admin Registration and Authentication Tests", () => {
         });
 
       expect(response.status).toBe(200);
-      expect(response.body).toBe("Password verified, admin logged in");
+      expect(response.body.msg).toBe("Password verified, admin logged in");
     });
 
     it("Login with incorrect credentials", async () => {

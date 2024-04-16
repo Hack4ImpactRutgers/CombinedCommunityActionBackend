@@ -11,6 +11,9 @@ const auth = (req, res, next) => {
     // const token = req.header("x-auth-token");
     let { token } = req.cookies;
     if (!token) {
+        token = req.header("cca-auth-token") || req.header("Cca-auth-token");
+    }
+    if (!token) {
         token = req.body.token;
     }
     if (!token)

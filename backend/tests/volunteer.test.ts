@@ -97,7 +97,7 @@ describe("Authentication and Signup Route Tests", () => {
 
       // Expect an error response with a status code of 200 and a specific success message.
       expect(response.status).toBe(200);
-      expect(response.body).toBe("OTP verified, user logged in");
+      expect(response.body.msg).toBe("OTP verified, user logged in");
     });
 
     it("should return an error for invalid OTP", async () => {
