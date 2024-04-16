@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
     client: { type: Types.ObjectId, ref: "Client", required: true },
     createdOn: { type: Date },
     deliverBy: { type: Date },
-    foodItem: foodItemSchema,
+    foodItems: [foodItemSchema],
     status: { type: String, enum: ["pending", "successful", "failed"], default: "pending" },
   });
 

@@ -40,15 +40,14 @@ router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
 router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
   const {
     client,
-    deliverBy,
-    foodItem,
+    brand,
+    weight,
   } = req.body;
   const order = new Order(
     {
       client: new mongoose.Types.ObjectId(client),
       createdOn: new Date(),
-      deliverBy,
-      foodItem,
+      foodItems: [{ brand, weight }],
       stauts: "pending"
     });
   order.save()
