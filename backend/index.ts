@@ -23,7 +23,7 @@ const DEV = process.env.NODE_ENV === "DEV";
 app.use(express.json());
 app.use(cors({
   credentials: true,
-  origin: "https://cca-frontend.vercel.app",
+  origin: process.env.FRONTEND_URL,
 }));
 app.use(cookieParser());
 

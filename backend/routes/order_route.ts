@@ -3,10 +3,11 @@ import Order from "../schemas/order_schema";
 import auth from "../middleware/auth";
 import roles from "../middleware/roles";
 const router = express.Router();
+import mongoose from "mongoose";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-router.get("/all", [auth, roles.admin], async (req: Request, res: Response) => {
+router.get("/all", [auth, roles.volunteer], async (req: Request, res: Response) => {
   console.log("/orders/all");
   try {
     const orders = await Order.find({});
@@ -37,7 +38,19 @@ router.get("/:id", [auth, roles.volunteer], (req: Request, res: Response) => {
 });
 
 router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
-  const order = new Order(req.body);
+  const {
+    client,
+    deliverBy,
+    foodItems,
+  } = req.body;
+  const order = new Order(
+    {
+      client: new mongoose.Types.ObjectId(client),
+      createdOn: new Date(),
+      deliverBy,
+      foodItems,
+      stauts: "pending"
+    });
   order.save()
     .then((order: any) => {
       res.send(order);

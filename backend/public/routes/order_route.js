@@ -17,8 +17,9 @@ const order_schema_1 = __importDefault(require("../schemas/order_schema"));
 const auth_1 = __importDefault(require("../middleware/auth"));
 const roles_1 = __importDefault(require("../middleware/roles"));
 const router = express_1.default.Router();
+const mongoose_1 = __importDefault(require("mongoose"));
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-router.get("/all", [auth_1.default, roles_1.default.admin], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/all", [auth_1.default, roles_1.default.volunteer], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("/orders/all");
     try {
         const orders = yield order_schema_1.default.find({});
@@ -47,7 +48,14 @@ router.get("/:id", [auth_1.default, roles_1.default.volunteer], (req, res) => {
     });
 });
 router.post("/", [auth_1.default, roles_1.default.admin], (req, res) => {
-    const order = new order_schema_1.default(req.body);
+    const { client, deliverBy, foodItems, } = req.body;
+    const order = new order_schema_1.default({
+        client: new mongoose_1.default.Types.ObjectId(client),
+        createdOn: new Date(),
+        deliverBy,
+        foodItems,
+        stauts: "pending"
+    });
     order.save()
         .then((order) => {
         res.send(order);
