@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const deliveryReportSchema = new mongoose.Schema({
   // Assuming these match the fields from the delivery report input
   firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  lastName: { type: String },
   address: { type: String, required: true },
   city: { type: String, required: true },
   zipCode: { type: String, required: true },
@@ -20,7 +20,7 @@ const deliveryReportSchema = new mongoose.Schema({
   comments: String,
   supplies: { type: String, required: true },
   needs: { type: String, required: true },
-  name: { type: String, required: true }, // volunteer name 
+  name: { type: String, required: true }, // volunteer name
   updated: { type: Boolean, required: true },
   selectedDate: { type: Date, required: true },
   // Add the order and volunteer reference fields

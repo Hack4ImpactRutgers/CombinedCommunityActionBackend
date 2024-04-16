@@ -7,7 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const deliveryReportSchema = new mongoose_1.default.Schema({
     // Assuming these match the fields from the delivery report input
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    lastName: { type: String },
     address: { type: String, required: true },
     city: { type: String, required: true },
     zipCode: { type: String, required: true },
