@@ -13,7 +13,7 @@ const orderSchema = new mongoose_1.default.Schema({
     client: { type: Types.ObjectId, ref: "Client", required: true },
     createdOn: { type: Date },
     deliverBy: { type: Date },
-    foodItems: [foodItemSchema],
+    foodItem: foodItemSchema,
     status: { type: String, enum: ["pending", "successful", "failed"], default: "pending" },
 });
 const orderModel = mongoose_1.default.model("order", orderSchema);

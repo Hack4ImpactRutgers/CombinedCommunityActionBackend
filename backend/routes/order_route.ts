@@ -41,14 +41,14 @@ router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
   const {
     client,
     deliverBy,
-    foodItems,
+    foodItem,
   } = req.body;
   const order = new Order(
     {
       client: new mongoose.Types.ObjectId(client),
       createdOn: new Date(),
       deliverBy,
-      foodItems,
+      foodItem,
       stauts: "pending"
     });
   order.save()

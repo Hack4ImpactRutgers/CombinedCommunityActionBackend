@@ -48,12 +48,12 @@ router.get("/:id", [auth_1.default, roles_1.default.volunteer], (req, res) => {
     });
 });
 router.post("/", [auth_1.default, roles_1.default.admin], (req, res) => {
-    const { client, deliverBy, foodItems, } = req.body;
+    const { client, deliverBy, foodItem, } = req.body;
     const order = new order_schema_1.default({
         client: new mongoose_1.default.Types.ObjectId(client),
         createdOn: new Date(),
         deliverBy,
-        foodItems,
+        foodItem,
         stauts: "pending"
     });
     order.save()
