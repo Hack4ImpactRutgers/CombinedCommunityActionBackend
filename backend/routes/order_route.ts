@@ -43,6 +43,7 @@ router.post("/", [auth, roles.admin], (req: Request, res: Response) => {
     brand,
     weight,
   } = req.body;
+  console.log(req.body);
   const order = new Order(
     {
       client: new mongoose.Types.ObjectId(client),
