@@ -131,8 +131,8 @@ router.post("/volunteer/login", async (req, res) => {
     email: email,
     roles: ["volunteer"]
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry
-  res.cookie("token", token, { httpOnly: true });
-  res.json("OTP verified, user logged in");
+  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true });
+  res.json({ msg: "OTP verified, user logged in", "token": token });
 });
 
 /**
@@ -226,7 +226,7 @@ router.post("/admin/login", async (req, res) => {
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" });
 
   res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true });
-  res.status(200).json("Password verified, admin logged in");
+  res.status(200).json({ msg: "Password verified, admin logged in", "token": token });
 });
 
 /**

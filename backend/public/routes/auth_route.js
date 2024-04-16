@@ -128,8 +128,8 @@ router.post("/volunteer/login", (req, res) => __awaiter(void 0, void 0, void 0, 
         email: email,
         roles: ["volunteer"]
     }, TOKEN_SECRET, { expiresIn: "1h" }); // Set token expiry
-    res.cookie("token", token, { httpOnly: true });
-    res.json("OTP verified, user logged in");
+    res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true });
+    res.json({ msg: "OTP verified, user logged in", "token": token });
 }));
 /**
  * Endpoint to log out a user by clearing the JWT token cookie.
@@ -209,7 +209,7 @@ router.post("/admin/login", (req, res) => __awaiter(void 0, void 0, void 0, func
         roles: ["admin"],
     }, TOKEN_SECRET, { expiresIn: "1h" });
     res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), secure: true });
-    res.status(200).json("Password verified, admin logged in");
+    res.status(200).json({ msg: "Password verified, admin logged in", "token": token });
 }));
 /**
  * Endpoint to log out an admin by clearing the JWT token cookie.

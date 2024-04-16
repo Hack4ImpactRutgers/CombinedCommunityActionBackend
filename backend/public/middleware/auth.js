@@ -9,7 +9,10 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const auth = (req, res, next) => {
     // check for token header
     // const token = req.header("x-auth-token");
-    const { token } = req.cookies;
+    let { token } = req.cookies;
+    if (!token) {
+        token = req.body.token;
+    }
     if (!token)
         return res.status(401).json("No token, authorization denied");
     try {
