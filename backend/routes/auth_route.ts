@@ -10,6 +10,12 @@ import roles from "../middleware/roles";
 import PasswordChangeRequest from "../schemas/password_change_schema";
 import crypto from "crypto";
 
+declare module "express-serve-static-core" {
+  export interface CookieOptions {
+    partitioned?: boolean;
+  }
+}
+
 const saltRounds = 10;
 
 const router = express.Router();
@@ -131,7 +137,8 @@ router.post("/volunteer/login", async (req, res) => {
     email: email,
     roles: ["volunteer"]
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" }); // Set token expiry
-  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), sameSite: "none", secure: true });
+
+  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), sameSite: "none", secure: true, partitioned: true });
   res.json({ msg: "OTP verified, user logged in", "token": token });
 });
 
@@ -225,7 +232,7 @@ router.post("/admin/login", async (req, res) => {
     roles: ["admin"],
   }, TOKEN_SECRET as Secret, { expiresIn: "1h" });
 
-  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), sameSite: "none", secure: true });
+  res.cookie("token", token, { expires: new Date(Date.now() + 60 * 60 * 1000), sameSite: "none", secure: true, partitioned: true });
   res.status(200).json({ msg: "Password verified, admin logged in", "token": token });
 });
 
