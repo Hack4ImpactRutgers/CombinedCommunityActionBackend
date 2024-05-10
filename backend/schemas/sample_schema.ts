@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const person = new mongoose.Schema({
   name: {
@@ -13,4 +13,4 @@ const person = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('person', person);
+module.exports = mongoose.model("person", person);

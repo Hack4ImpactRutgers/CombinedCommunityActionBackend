@@ -8,6 +8,8 @@ import clientRoute from "./routes/client_route";
 import authRoute from "./routes/auth_route";
 import orderRoute from "./routes/order_route";
 import deliveryRoute from "./routes/delivery_route";
+import siteRoute from "./routes/site_route";
+
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -33,6 +35,7 @@ app.use("/client", clientRoute);
 app.use("/auth", authRoute);
 app.use("/orders", orderRoute);
 app.use("/deliveries", deliveryRoute);
+app.use("/site", siteRoute);
 
 connectDB();
 

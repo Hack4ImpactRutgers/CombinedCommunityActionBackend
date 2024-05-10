@@ -14,6 +14,7 @@ const client_route_1 = __importDefault(require("./routes/client_route"));
 const auth_route_1 = __importDefault(require("./routes/auth_route"));
 const order_route_1 = __importDefault(require("./routes/order_route"));
 const delivery_route_1 = __importDefault(require("./routes/delivery_route"));
+const site_route_1 = __importDefault(require("./routes/site_route"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 dotenv_1.default.config();
 // Express setup
@@ -34,6 +35,7 @@ exports.app.use("/client", client_route_1.default);
 exports.app.use("/auth", auth_route_1.default);
 exports.app.use("/orders", order_route_1.default);
 exports.app.use("/deliveries", delivery_route_1.default);
+exports.app.use("/site", site_route_1.default);
 (0, connectDB_1.connectDB)();
 exports.app.get("/", (req, res) => {
     res.send("Express + TypeScript Server");

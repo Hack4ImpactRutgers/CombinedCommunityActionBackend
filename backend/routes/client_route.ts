@@ -77,4 +77,14 @@ router.patch("/:id", [auth, roles.admin], async (req: Request, res: Response) =>
   }
 });
 
+router.delete("/:id", [auth, roles.admin], async (req: Request, res: Response)=>{
+  const {id} = req.params;
+  try{
+    const deleted = Client.findByIdAndDelete(id);
+    res.json({deleted}).status(200);
+  }catch(error){
+    res.status(400).json({error});
+  }
+});
+
 export default router;

@@ -81,4 +81,14 @@ router.patch("/:id", [auth_1.default, roles_1.default.admin], (req, res) => __aw
         res.status(500).send({ error: "An error occurred updating the client." });
     }
 }));
+router.delete("/:id", [auth_1.default, roles_1.default.admin], (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const deleted = client_schema_1.default.findByIdAndDelete(id);
+        res.json({ deleted }).status(200);
+    }
+    catch (error) {
+        res.status(400).json({ error });
+    }
+}));
 exports.default = router;
